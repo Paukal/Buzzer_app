@@ -1,9 +1,9 @@
 CREATE TABLE events (
    event_id serial PRIMARY KEY,
    event_name VARCHAR ( 250 ) UNIQUE NOT NULL,
-   place_name VARCHAR ( 50 ),
-   link VARCHAR ( 100 ),
-   address VARCHAR ( 50 ),
-   city VARCHAR ( 50 ),
+   place_name VARCHAR ( 150 ),
+   link VARCHAR ( 250 ),
+   address VARCHAR ( 150 ),
+   city VARCHAR ( 150 ),
    start_date TIMESTAMP
 );

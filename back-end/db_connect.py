@@ -24,6 +24,8 @@ def connect():
         db_version = cur.fetchone()
         print(db_version)
 
+        cur.execute('SET client_encoding TO \'UTF8\';')
+
 	# close the communication with the PostgreSQL
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import './map.dart';
 import './fb.dart';
-import 'package:http/http.dart' as http;
-
+import 'eventList.dart';
 
 void main() => runApp(const MyApp());
 
@@ -32,28 +31,20 @@ class MyStatefulWidget extends StatefulWidget {
 /// This is the private State class that goes with MyStatefulWidget.
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
+
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
     MapSample(),
-    Text(
-      'Event list items empty',
-      style: optionStyle,
-    ),
+    EventList(),
     FB(),
   ];
 
-  Future<void> conn() async {
-    var url = Uri.parse('http://10.0.2.2:8081'); //instead of localhost
-    var response = await http.get(url);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-  }
+
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      conn();
     });
   }
 

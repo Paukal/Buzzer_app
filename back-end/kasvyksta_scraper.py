@@ -2,58 +2,71 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import psycopg2
 from db_connect import connect
+import time
+from threading import Thread
 
-def scrape():
-    conn = connect()
-    cur = conn.cursor()
-    cur.execute('SET client_encoding TO \'UTF8\';')
-    conn.commit()
+class KasVykstaScraper(Thread):
 
-    lst = []
+    def __init__(self):
+        Thread.__init__(self)
 
-    url = "https://renginiai.kasvyksta.lt/lietuva"
-    page = urlopen(url)
-    html = page.read().decode("utf-8")
-    soup = BeautifulSoup(html, "html.parser")
+    def run(self):
 
-    rows = soup.find_all("div", {"class": "block event-block"})
+        while 1:
+            conn = connect()
+            cur = conn.cursor()
 
-    for row in rows:
+            lst = []
+            url = "https://renginiai.kasvyksta.lt/lietuva"
 
-        loc = row.find("div", itemprop="location")
-        meta = loc.find_all("meta")
+            page = urlopen(url)
+            html = page.read().decode("utf-8")
+            soup = BeautifulSoup(html, "html.parser")
 
-        locationData = []
-        for data in meta:
-            locationData.append(data["content"])
+            rows = soup.find_all("div", {"class": "block event-block"})
 
-        eventName = row.find(itemprop ='name').string
-        placeName=locationData[0]
-        link=locationData[1]
-        address=locationData[2]
-        city=locationData[3]
-        startDate = row.find("meta", itemprop="startDate")["content"]
+            for row in rows:
 
-        '''print(eventName)
-        print(placeName)
-        print(link)
-        print(address)
-        print(city)
-        print(startDate)
-        print("")'''
+                loc = row.find("div", itemprop="location")
+                meta = loc.find_all("meta")
 
-        lst.append((eventName, placeName, link, address, city, startDate))
+                locationData = []
+                for data in meta:
+                    locationData.append(data["content"])
 
-        sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date) \
-        VALUES (%s,%s,%s,%s,%s,%s) RETURNING event_id;"
+                eventName = row.find(itemprop ='name').string
+                placeName=locationData[0]
+                link=locationData[1]
+                address=locationData[2]
+                city=locationData[3]
+                startDate = row.find("meta", itemprop="startDate")["content"]
 
-        cur.execute(sql, (eventName, placeName, link, address, city, startDate))
-        id = cur.fetchone()[0]
+                '''print(eventName)
+                print(placeName)
+                print(link)
+                print(address)
+                print(city)
+                print(startDate)
+                print("")'''
 
-        '''print("id from db: ", id)
-        print("")'''
+                lst.append((eventName, placeName, link, address, city, startDate))
 
-        conn.commit()
+                sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date) \
+                VALUES (%s,%s,%s,%s,%s,%s) RETURNING event_id;"
 
-    #print(lst)
-    conn.close()
+                try:
+                    cur.execute(sql, (eventName, placeName, link, address, city, startDate))
+                    id = cur.fetchone()[0]
+
+                    '''print("id from db: ", id)
+                    print("")'''
+                except psycopg2.errors.UniqueViolation:
+                    print("Event already exists in the DB")
+                except psycopg2.errors.StringDataRightTruncation:
+                    print("One of the values too long for DB")
+
+                conn.commit()
+
+            #print(lst)
+            conn.close()
+            time.sleep(10800)
