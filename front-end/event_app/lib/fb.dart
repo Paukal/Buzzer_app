@@ -23,6 +23,7 @@ class _FBState extends State<FB> {
               final res = await fb.logIn(permissions: [
                 FacebookPermission.publicProfile,
                 FacebookPermission.email,
+                FacebookPermission.readInsights,
                 FacebookPermission.userEvents
               ]);
 

@@ -58,15 +58,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.wb_sunny_outlined),
-            label: 'map',
+            label: 'Locations',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.apps_rounded),
-            label: 'events',
+            label: 'Events',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
-            label: 'acc',
+            label: 'Menu',
           ),
         ],
         currentIndex: _selectedIndex,

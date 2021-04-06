@@ -3,6 +3,9 @@ import './gps.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:collection';
+import 'package:geocoding/geocoding.dart';
+import 'eventsParse.dart';
+import 'client.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -18,31 +21,59 @@ class MapSampleState extends State<MapSample> {
     zoom: 10,
   );
 
+  Future<List<Event>> assignList() async {
+    return await fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: GoogleMap(
+    final Size size = MediaQuery.of(context).size;
+
+    return Stack(
+    children: [
+    GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-          _setMapStyle(controller); //from mapstyle.withgoogle.com
-          _goToTheLake();
-        },
-        markers: _markers,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        zoomControlsEnabled: false,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: Text('Add place marker'),
-        icon: Icon(Icons.account_circle_outlined),
-        backgroundColor: Colors.amber[800],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    onMapCreated: (GoogleMapController controller) {
+      _controller.complete(controller);
+            _setMapStyle(controller); //from mapstyle.withgoogle.com
+      _goToTheLake();
+    },
+      markers: _markers,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: true,
+    ),
+
+    ],
     );
-  }
+    }
+
+    Future<List<Location>> getCoords(List<Event> list) async {
+      Iterator<Event> it = list.iterator;
+      it.moveNext();
+
+      List<Location> locations = await locationFromAddress(it.current.address);
+      List<Location> temp;
+
+      while(it.moveNext()) {
+        try {
+          temp = await locationFromAddress(it.current.address);
+          locations.add(temp.first);
+        } catch(err) {
+          final address = it.current.address;
+          print("$err. Address: $address. Trying to search with place name.");
+          try {
+            temp = await locationFromAddress(it.current.placeName);
+            locations.add(temp.first);
+          } catch(err) {
+            final place = it.current.placeName;
+            print("$err. Place name: $place");
+          }
+        }
+      }
+      return locations;
+    }
 
   void _setMapStyle(GoogleMapController controller) async {
     String style = await DefaultAssetBundle.of(context)
@@ -52,24 +83,33 @@ class MapSampleState extends State<MapSample> {
 
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
-    final pos = await determinePosition();
+    //final pos = await determinePosition();
+    final eventList = await assignList();
+    final pos = await getCoords(eventList);
     print(pos);
 
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         bearing: 0,
-        target: LatLng(pos.latitude, pos.longitude),
+        target: LatLng(pos.first.latitude, pos.first.longitude),
         tilt: 0,
         zoom: 16)));
 
     setState(() {
-      _markers.add(Marker(
-        markerId: MarkerId("0"),
-        position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(
-          title: "Sveiki",
-          snippet: "YEAH",
-        ),
-      ));
+      Iterator<Location> it = pos.iterator;
+      int markId = 0;
+
+      while(it.moveNext()) {
+        _markers.add(Marker(
+          markerId: MarkerId("$markId"),
+          position: LatLng(it.current.latitude, it.current.longitude),
+          infoWindow: InfoWindow(
+            title: eventList.elementAt(markId).eventName,
+            snippet: eventList.elementAt(markId).startDate + "0",
+          ),
+        ));
+
+        markId++;
+      }
     });
   }
 }
