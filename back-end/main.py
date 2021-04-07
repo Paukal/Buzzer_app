@@ -14,29 +14,30 @@ cur = conn.cursor()
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json; charset=utf-8")
-        self.end_headers()
+        if self.path == "/events":
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
 
-        sql = "SELECT * FROM public.events ORDER BY event_id ASC "
+            sql = "SELECT * FROM public.events ORDER BY event_id ASC "
 
-        cur.execute(sql)
-        list = cur.fetchall()
+            cur.execute(sql)
+            list = cur.fetchall()
 
-        print("raw listas: ", list)
+            print("raw listas: ", list)
 
-        def json_default(value):
-            if isinstance(value, datetime.datetime):
-                return str('{0}-{1}-{2} {3}:{4}'.format(value.year, value.month, value.day, value.hour, value.minute))
-            else:
-                return value.__dict__
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                else:
+                    return value.__dict__
 
-        json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
 
-        #print("DB returned json: ", json_string.decode())
+            #print("DB returned json: ", json_string.decode())
 
-        self.wfile.write(json_string)
-        self.wfile.flush()
+            self.wfile.write(json_string)
+            self.wfile.flush()
 
 
 if __name__ == "__main__":

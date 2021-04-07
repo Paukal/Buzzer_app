@@ -7,3 +7,12 @@ CREATE TABLE events (
    city VARCHAR ( 150 ),
    start_date TIMESTAMP
 );
+
+CREATE TABLE places (
+   event_id serial PRIMARY KEY,
+   place_name VARCHAR ( 250 ) UNIQUE NOT NULL,
+   place_type VARCHAR ( 250 ),
+   link VARCHAR ( 250 ),
+   address VARCHAR ( 150 ),
+   city VARCHAR ( 150 )
+);
