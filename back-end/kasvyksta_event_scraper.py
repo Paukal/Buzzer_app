@@ -5,13 +5,12 @@ from db_connect import connect
 import time
 from threading import Thread
 
-class KasVykstaScraper(Thread):
+class KasVykstaEventScraper(Thread):
 
     def __init__(self):
         Thread.__init__(self)
 
     def run(self):
-
         while 1:
             conn = connect()
             cur = conn.cursor()
@@ -58,12 +57,12 @@ class KasVykstaScraper(Thread):
                     cur.execute(sql, (eventName, placeName, link, address, city, startDate))
                     id = cur.fetchone()[0]
 
-                    '''print("id from db: ", id)
-                    print("")'''
+                    print("Created event. id from db: ", id)
+                    print("")
                 except psycopg2.errors.UniqueViolation:
                     print("Event already exists in the DB")
                 except psycopg2.errors.StringDataRightTruncation:
-                    print("One of the values too long for DB")
+                    print("One of the event values too long for DB")
 
                 conn.commit()
 

@@ -9,7 +9,7 @@ CREATE TABLE events (
 );
 
 CREATE TABLE places (
-   event_id serial PRIMARY KEY,
+   place_id serial PRIMARY KEY,
    place_name VARCHAR ( 250 ) UNIQUE NOT NULL,
    place_type VARCHAR ( 250 ),
    link VARCHAR ( 250 ),

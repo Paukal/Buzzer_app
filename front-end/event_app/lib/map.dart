@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'dart:collection';
 import 'package:geocoding/geocoding.dart';
 import 'eventsParse.dart';
+import 'placesParse.dart';
 import 'client.dart';
 import 'eventFilter.dart';
+import 'mapPlaceFilter.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -20,20 +22,46 @@ class MapSampleState extends State<MapSample> {
   bool showEvents = true;
   bool showPlaces = false;
 
+  //event filters:
   bool filterDateToday = true;
   bool filterDateTomorrow = false;
   bool filterDateThisWeek = false;
   bool filterDateYesterday = false;
   bool filterDateLastWeek = false;
 
+  //place filters:
+  bool restPlaces = true; //poilsiavietes
+  bool sceneryPlaces = true; //apzvalgos aiksteles
+  bool hikingTrails = true; //pesciuju takai
+  bool forts = false;
+  bool bikeTrails = false; //dviraciu marsrutai
+  bool streetArt = false;
+  bool museums = false;
+  bool architecture = false;
+  bool nature = true;
+  bool history = false;
+  bool trails = false; //marsrutai
+  bool expositions = false;
+  bool parks = true;
+  bool sculptures = false; //skulpturos ir paminklai
+  bool churches = false;
+  bool mounds = true; //piliakalniai
+
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(54.898521, 23.903597),
     zoom: 10,
   );
 
-  Future<List<Event>> assignList() async {
+  Future<List<Event>> assignEventList() async {
     return await fetchEventList(filterDateToday, filterDateTomorrow,
         filterDateThisWeek, filterDateYesterday, filterDateLastWeek);
+  }
+
+  Future<List<Place>> assignPlaceList() async {
+    return await fetchPlaceList(restPlaces, sceneryPlaces, hikingTrails,
+        forts, bikeTrails, streetArt, museums, architecture, nature,
+        history, trails, expositions, parks, sculptures,
+        churches, mounds);
   }
 
   @override
@@ -62,7 +90,8 @@ class MapSampleState extends State<MapSample> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               IconButton(
-                icon: const Icon(Icons.volume_up),
+                icon: const Icon(Icons.event),
+                color: Colors.white,
                 tooltip: 'Increase volume by 10',
                 onPressed: () {
                   setState(() {
@@ -75,7 +104,8 @@ class MapSampleState extends State<MapSample> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.volume_up),
+                icon: const Icon(Icons.add_location_rounded),
+                color: Colors.white,
                 tooltip: 'Increase volume by 10',
                 onPressed: () {
                   setState(() {
@@ -83,6 +113,7 @@ class MapSampleState extends State<MapSample> {
                     showPlaces = true;
 
                     _markers.clear();
+                    _markPlaces();
                   });
                 },
               ),
@@ -98,7 +129,7 @@ class MapSampleState extends State<MapSample> {
                 onPressed: () {
                   _navigateAndDisplaySelection(context);
                 },
-                child: const Icon(Icons.navigation, size: 20),
+                child: const Icon(Icons.apps, size: 20),
               ),
             )),
       ],
@@ -108,34 +139,72 @@ class MapSampleState extends State<MapSample> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => MapEventFilter(
-              filterDateToday,
-              filterDateTomorrow,
-              filterDateThisWeek,
-              filterDateYesterday,
-              filterDateLastWeek)),
-    );
+    if(showEvents) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                MapEventFilter(
+                    filterDateToday,
+                    filterDateTomorrow,
+                    filterDateThisWeek,
+                    filterDateYesterday,
+                    filterDateLastWeek)),
+      );
 
-    setState(() {
-      filterDateToday = result[0];
-      filterDateTomorrow = result[1];
-      filterDateThisWeek = result[2];
-      filterDateYesterday = result[3];
-      filterDateLastWeek = result[4];
+      setState(() {
+        filterDateToday = result[0];
+        filterDateTomorrow = result[1];
+        filterDateThisWeek = result[2];
+        filterDateYesterday = result[3];
+        filterDateLastWeek = result[4];
 
-      _markers.clear();
-      _markEvents();
-    });
+        _markers.clear();
+        _markEvents();
+      });
+    }
+
+    if(showPlaces) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                MapPlaceFilter(
+                    restPlaces, sceneryPlaces, hikingTrails,
+                    forts, bikeTrails, streetArt, museums, architecture, nature,
+                    history, trails, expositions, parks, sculptures,
+                    churches, mounds)),
+      );
+
+      setState(() {
+        restPlaces = result[0]; //poilsiavietes
+        sceneryPlaces = result[1]; //apzvalgos aiksteles
+        hikingTrails = result[2]; //pesciuju takai
+        forts = result[3];
+        bikeTrails = result[4]; //dviraciu marsrutai
+        streetArt = result[5];
+        museums = result[6];
+        architecture = result[7];
+        nature = result[8];
+        history = result[9];
+        trails = result[10]; //marsrutai
+        expositions = result[11];
+        parks = result[12];
+        sculptures = result[13]; //skulpturos ir paminklai
+        churches = result[14];
+        mounds = result[15]; //piliakalniai
+
+        _markers.clear();
+        _markPlaces();
+      });
+    }
   }
 
-  Future<List<Location>> getCoords(List<Event> list) async {
-    Iterator<Event> it = list.iterator;
+  Future<List<Location>> getCoords(List list) async {
+    Iterator it = list.iterator;
     it.moveNext();
 
-    List<Location> locations = await locationFromAddress(it.current.address);
+    List<Location> locations = await locationFromAddress(it.current.address + ", " + it.current.city);
     List<Location> temp;
 
     while (it.moveNext()) {
@@ -151,6 +220,14 @@ class MapSampleState extends State<MapSample> {
         } catch (err) {
           final place = it.current.placeName;
           print("$err. Place name: $place");
+          try {
+            temp = await locationFromAddress(it.current.city);
+            locations.add(temp.first);
+            print("Added city coordinates");
+          } catch (err) {
+            final city = it.current.city;
+            print("$err. City: $place");
+          }
         }
       }
     }
@@ -167,7 +244,7 @@ class MapSampleState extends State<MapSample> {
     final GoogleMapController controller = await _controller.future;
     //final pos = await determinePosition();
     try {
-      final eventList = await assignList();
+      final eventList = await assignEventList();
       final pos = await getCoords(eventList);
       print(pos);
 
@@ -196,6 +273,42 @@ class MapSampleState extends State<MapSample> {
       });
     } catch (err) {
         print("exception: $err");
+    }
+  }
+
+  Future<void> _markPlaces() async {
+    final GoogleMapController controller = await _controller.future;
+    //final pos = await determinePosition();
+    try {
+      final placeList = await assignPlaceList();
+      final pos = await getCoords(placeList);
+      print(pos);
+
+      controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          bearing: 0,
+          target: LatLng(pos.first.latitude, pos.first.longitude),
+          tilt: 0,
+          zoom: 16)));
+
+      setState(() {
+        Iterator<Location> it = pos.iterator;
+        int markId = 0;
+
+        while (it.moveNext()) {
+          _markers.add(Marker(
+            markerId: MarkerId("$markId"),
+            position: LatLng(it.current.latitude, it.current.longitude),
+            infoWindow: InfoWindow(
+              title: placeList.elementAt(markId).placeName,
+              snippet: placeList.elementAt(markId).placeType,
+            ),
+          ));
+
+          markId++;
+        }
+      });
+    } catch (err) {
+      print("exception: $err");
     }
   }
 }
