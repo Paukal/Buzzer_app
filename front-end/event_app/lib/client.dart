@@ -260,3 +260,20 @@ Future<List<Place>> fetchPlaceData() async {
 
   return collection.list;
 }
+
+Future<http.Response> sendUserDataToServer(String name, String lastName, String email, String id) {
+  var url = Uri.parse('http://10.0.2.2:8081/users');
+
+  return http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'first_name': name,
+      'last_name': lastName,
+      'email': email,
+      'id': id,
+    }),
+  );
+}

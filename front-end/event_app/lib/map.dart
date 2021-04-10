@@ -92,7 +92,7 @@ class MapSampleState extends State<MapSample> {
               IconButton(
                 icon: const Icon(Icons.event),
                 color: Colors.white,
-                tooltip: 'Increase volume by 10',
+                tooltip: 'Show events',
                 onPressed: () {
                   setState(() {
                     showEvents = true;
@@ -106,7 +106,7 @@ class MapSampleState extends State<MapSample> {
               IconButton(
                 icon: const Icon(Icons.add_location_rounded),
                 color: Colors.white,
-                tooltip: 'Increase volume by 10',
+                tooltip: 'Show places',
                 onPressed: () {
                   setState(() {
                     showEvents = false;

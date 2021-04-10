@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './map.dart';
-import './fb.dart';
+import './menu.dart';
 import 'eventList.dart';
 
 void main() => runApp(const MyApp());
@@ -37,7 +37,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static List<Widget> _widgetOptions = <Widget>[
     MapSample(),
     EventList(),
-    FB(),
+    Menu(),
   ];
 
 
