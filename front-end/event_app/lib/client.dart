@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'eventsParse.dart';
 import 'placesParse.dart';
@@ -83,15 +82,6 @@ Future<List<Event>> fetchEventData() async {
   print('Parsed: ${collection.list.first.address}');
 
   return collection.list;
-}
-
-//for testing
-_write(String text) async {
-  final Directory directory = await getApplicationDocumentsDirectory();
-  final File file = File('${directory.path}/file.txt');
-  print('${file.path} isAbsolute? ${file.isAbsolute}');
-
-  await file.writeAsString(text);
 }
 
 Future<List<Place>> fetchPlaceList(

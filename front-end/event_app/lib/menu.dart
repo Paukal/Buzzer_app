@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'client.dart';
 import 'accVerification.dart';
+import 'createPlaceEvent.dart';
 
 class Menu extends StatefulWidget {
   final fb = FacebookLogin();
@@ -28,7 +29,7 @@ class _MenuState extends State<Menu> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-              getAccountButtons(),
+                  s1.loggedIn ? getAccountButtons() : Container(),
               getLogInOutButton(),
             ])),
       ),
@@ -36,7 +37,7 @@ class _MenuState extends State<Menu> {
   }
 
   Widget getLogInOutButton() {
-    if (!s1.loggedIn) {
+    if (s1.loggedIn) {
       return OutlinedButton(
         child: Text('Log Out'),
         onPressed: () async {
@@ -106,7 +107,9 @@ class _MenuState extends State<Menu> {
           children: [
             OutlinedButton(
               child: Text('Add place/event'),
-              onPressed: () {},
+              onPressed: () {
+                _navigateAndDisplaySelection2(context);
+              },
             )
           ]);
     }
@@ -125,6 +128,18 @@ class _MenuState extends State<Menu> {
       context,
       MaterialPageRoute(
           builder: (context) => AccVerification()),
+    );
+
+    setState(() {});
+  }
+
+  void _navigateAndDisplaySelection2(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CreatePlaceEvent()),
     );
 
     setState(() {});
