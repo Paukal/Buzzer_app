@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:camera/camera.dart';
 
 class AccVerification extends StatefulWidget {
   @override
@@ -18,13 +19,13 @@ class AccVerificationState extends State<AccVerification> {
         title: Text("Account verification"),
       ),
       backgroundColor: Colors.white,
-      body: new Container(
-          padding: const EdgeInsets.all(40.0),
-          child: new Column(
+      body: Container(
+          padding: EdgeInsets.all(40.0),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              new TextField(
-                decoration: new InputDecoration(labelText: "Enter your number"),
+              TextField(
+                decoration: InputDecoration(labelText: "Enter your number"),
                 keyboardType: TextInputType.phone,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'[+0-9]'))

@@ -5,7 +5,9 @@ CREATE TABLE events (
    link VARCHAR ( 250 ),
    address VARCHAR ( 150 ),
    city VARCHAR ( 150 ),
-   start_date TIMESTAMP
+   start_date TIMESTAMP,
+   public BOOLEAN,
+   user_added_id NUMERIC
 );
 
 CREATE TABLE places (
@@ -14,12 +16,15 @@ CREATE TABLE places (
    place_type VARCHAR ( 250 ),
    link VARCHAR ( 250 ),
    address VARCHAR ( 150 ),
-   city VARCHAR ( 150 )
+   city VARCHAR ( 150 ),
+   public BOOLEAN,
+   user_added_id NUMERIC
 );
 
 CREATE TABLE users (
    user_id NUMERIC PRIMARY KEY,
    first_name VARCHAR ( 250 ),
    last_name VARCHAR ( 250 ),
-   email VARCHAR ( 250 )
+   email VARCHAR ( 250 ),
+   verified BOOLEAN
 );

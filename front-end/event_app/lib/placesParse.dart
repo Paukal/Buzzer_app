@@ -18,9 +18,11 @@ class Place {
   final String link;
   final String address;
   final String city;
+  final bool public;
+  final String userAddedID;
 
-  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city);
+  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID);
 
   factory Place.fromJson(List<dynamic> json) =>
-      Place(json[0], json[1], json[2], json[3], json[4], json[5]);
+      Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7]);
 }

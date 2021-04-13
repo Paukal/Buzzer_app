@@ -252,7 +252,7 @@ Future<List<Place>> fetchPlaceData() async {
 }
 
 Future<http.Response> sendUserDataToServer(String name, String lastName, String email, String id) {
-  var url = Uri.parse('http://10.0.2.2:8081/users');
+  var url = Uri.parse('http://10.0.2.2:8081/user/connected');
 
   return http.post(
     url,
@@ -264,6 +264,47 @@ Future<http.Response> sendUserDataToServer(String name, String lastName, String 
       'last_name': lastName,
       'email': email,
       'id': id,
+    }),
+  );
+}
+
+Future<http.Response> sendNewEventDataToServer(String eventName, String placeName, String link, String address, String city, String startDate, String public, String userId) {
+  var url = Uri.parse('http://10.0.2.2:8081/user/event');
+
+  return http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'event_name': eventName,
+      'place_name': placeName,
+      'link': link,
+      'address': address,
+      'city': city,
+      'start_date': startDate,
+      'public': public,
+      'user_id': userId,
+    }),
+  );
+}
+
+Future<http.Response> sendNewPlaceDataToServer(String placeName, String placeType, String link, String address, String city, String public, String userId) {
+  var url = Uri.parse('http://10.0.2.2:8081/user/place');
+
+  return http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'place_name': placeName,
+      'place_type': placeType,
+      'link': link,
+      'address': address,
+      'city': city,
+      'public': public,
+      'user_id': userId,
     }),
   );
 }

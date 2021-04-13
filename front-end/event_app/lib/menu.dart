@@ -30,8 +30,8 @@ class _MenuState extends State<Menu> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   s1.loggedIn ? getAccountButtons() : Container(),
-              getLogInOutButton(),
-            ])),
+                  getLogInOutButton(),
+                ])),
       ),
     );
   }
@@ -65,9 +65,9 @@ class _MenuState extends State<Menu> {
         // Check result status
         switch (res.status) {
           case FacebookLoginStatus.success:
-            // Logged in
+          // Logged in
 
-            // Send this access token to server for validation and auth
+          // Send this access token to server for validation and auth
             final accessToken = res.accessToken;
             print('Access Token: ${accessToken!.token}');
 
@@ -80,18 +80,22 @@ class _MenuState extends State<Menu> {
             // But user can decline permission
             if (email != null) print('And your email is $email');
 
-            final resp = await sendUserDataToServer(
-                profile.firstName!, profile.lastName!, email!, profile.userId);
+            final resp = await sendUserDataToServer(profile.firstName!, profile.lastName!, email!, profile.userId);
             print(resp.body);
+
+            s1.userId = profile.userId;
+            s1.firstName = profile.firstName!;
+            s1.lastName = profile.lastName!;
+            s1.email = email;
 
             _logInButtonChange();
 
             break;
           case FacebookLoginStatus.cancel:
-            // User cancel log in
+          // User cancel log in
             break;
           case FacebookLoginStatus.error:
-            // Log in failed
+          // Log in failed
             print('Error while log in: ${res.error}');
             break;
         }
@@ -100,25 +104,29 @@ class _MenuState extends State<Menu> {
   }
 
   Widget getAccountButtons() {
-    if (!s1.accVerified) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            OutlinedButton(
-              child: Text('Add place/event'),
-              onPressed: () {
-                _navigateAndDisplaySelection2(context);
-              },
-            )
-          ]);
-    }
-    return OutlinedButton(
-      child: Text('Verify account'),
-      onPressed: () {
-        _navigateAndDisplaySelection(context);
-      },
-    );
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          OutlinedButton(
+            child: Text('My events'),
+            onPressed: () {
+              //_navigateAndDisplaySelection3(context);
+            },
+          ),
+          OutlinedButton(
+            child: Text('Add place/event'),
+            onPressed: () {
+              _navigateAndDisplaySelection2(context);
+            },
+          ),
+          s1.accVerified ? Container() : OutlinedButton(
+            child: Text('Verify account'),
+            onPressed: () {
+              _navigateAndDisplaySelection(context);
+            },
+          ),
+        ]);
   }
 
   void _navigateAndDisplaySelection(BuildContext context) async {
@@ -149,6 +157,11 @@ class _MenuState extends State<Menu> {
 class LoggedInSingleton {
   static final LoggedInSingleton _singleton = LoggedInSingleton._internal();
   bool loggedIn = false;
+
+  String userId = "";
+  String firstName = "";
+  String lastName = "";
+  String email = "";
   bool accVerified = false;
 
   factory LoggedInSingleton() {

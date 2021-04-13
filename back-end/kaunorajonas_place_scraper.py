@@ -75,6 +75,8 @@ class KaunorajonasPlaceScraper(Thread):
 
                 address = placeName
                 city = "Kaunas"
+                public = "true"
+                user_added_id = "-1"
 
                 '''print(placeName)
                 print(placeType)
@@ -83,13 +85,13 @@ class KaunorajonasPlaceScraper(Thread):
                 print(city)
                 print("")'''
 
-                lst.append((placeName, placeType, link, address, city))
+                lst.append((placeName, placeType, link, address, city, public, user_added_id))
 
-                sql = "INSERT INTO places(place_name, place_type, link, address, city) \
-                VALUES (%s,%s,%s,%s,%s) RETURNING place_id;"
+                sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
 
                 try:
-                    cur.execute(sql, (placeName, placeType, link, address, city))
+                    cur.execute(sql, (placeName, placeType, link, address, city, public, user_added_id))
                     id = cur.fetchone()[0]
 
                     print("Created place. id from db: ", id)

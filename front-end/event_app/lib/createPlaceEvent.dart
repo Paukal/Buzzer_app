@@ -16,13 +16,13 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = HashSet<Marker>();
 
-  String dropdownValue1 = 'Event';
-  String dropdownValue2 = 'Public';
+  String dropdownValue = 'Event';
 
   bool showAddButton = false;
 
-  late double latitude;
-  late double longitude;
+  late String city;
+  late String street;
+  String enteredAddress = '';
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(54.898521, 23.903597),
@@ -32,7 +32,6 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    String text = '';
 
     return Scaffold(
         appBar: AppBar(
@@ -66,6 +65,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
+                        autocorrect: false,
                         cursorColor: Colors.black,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.go,
@@ -75,7 +75,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
                                 EdgeInsets.symmetric(horizontal: 15),
                             hintText: "Address..."),
                         onChanged: (value) {
-                          text = value;
+                          enteredAddress = value;
                         },
                       ),
                     ),
@@ -83,7 +83,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          setLocation(text);
+                          setLocation(enteredAddress);
                         },
                         child: Text('Search'),
                       ),
@@ -97,7 +97,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
               right: 315,
               left: 15,
               child: DropdownButton<String>(
-                value: dropdownValue1,
+                value: dropdownValue,
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
@@ -108,38 +108,10 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
                 ),
                 onChanged: (String? newValue) {
                   setState(() {
-                    dropdownValue1 = newValue!;
+                    dropdownValue = newValue!;
                   });
                 },
                 items: <String>['Event', 'Place']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-            Positioned(
-              top: 60,
-              right: 225,
-              left: 95,
-              child: DropdownButton<String>(
-                value: dropdownValue2,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue2 = newValue!;
-                  });
-                },
-                items: <String>['Public', 'Private']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -175,8 +147,12 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
     final GoogleMapController controller = await _controller.future;
     _markers.clear();
 
-    latitude = locations.first.latitude;
-    longitude = locations.first.longitude;
+    double latitude = locations.first.latitude;
+    double longitude = locations.first.longitude;
+
+    List<Placemark> locationAddress = await placemarkFromCoordinates(latitude, longitude);
+    city = locationAddress.first.subAdministrativeArea!;
+    street = locationAddress.first.street!;
 
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         bearing: 0,
@@ -200,10 +176,10 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
   }
 
   void _addPlaceEvent(BuildContext context) {
-    if(dropdownValue1 == 'Event') {
+    if(dropdownValue == 'Event') {
       _navigateAndDisplaySelection(context);
     }
-    else if(dropdownValue1 == 'Place') {
+    else if(dropdownValue == 'Place') {
       _navigateAndDisplaySelection2(context);
     }
   }
@@ -214,7 +190,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => AddEvent(latitude, longitude)),
+          builder: (context) => AddEvent(city, street, enteredAddress)),
     );
 
     setState(() {});
@@ -226,7 +202,7 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => AddPlace(latitude, longitude)),
+          builder: (context) => AddPlace(city, street)),
     );
 
     setState(() {});
