@@ -8,7 +8,7 @@ import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'client.dart';
 import 'eventFilter.dart';
-import 'mapPlaceFilter.dart';
+import 'placeFilter.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -169,7 +169,7 @@ class MapSampleState extends State<MapSample> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                MapPlaceFilter(
+                PlaceFilter(
                     restPlaces, sceneryPlaces, hikingTrails,
                     forts, bikeTrails, streetArt, museums, architecture, nature,
                     history, trails, expositions, parks, sculptures,

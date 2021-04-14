@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './map.dart';
 
-class MapPlaceFilter extends StatefulWidget {
+class PlaceFilter extends StatefulWidget {
   bool restPlaces; //poilsiavietes
   bool sceneryPlaces; //apzvalgos aiksteles
   bool hikingTrails; //pesciuju takai
@@ -19,19 +19,19 @@ class MapPlaceFilter extends StatefulWidget {
   bool churches;
   bool mounds; //piliakalniai
 
-  MapPlaceFilter(this.restPlaces, this.sceneryPlaces, this.hikingTrails,
+  PlaceFilter(this.restPlaces, this.sceneryPlaces, this.hikingTrails,
       this.forts, this.bikeTrails, this.streetArt, this.museums, this.architecture, this.nature,
       this.history, this.trails, this.expositions, this.parks, this.sculptures,
       this.churches, this.mounds);
 
   @override
-  State<MapPlaceFilter> createState() => MapPlaceFilterState(restPlaces, sceneryPlaces, hikingTrails,
+  State<PlaceFilter> createState() => PlaceFilterState(restPlaces, sceneryPlaces, hikingTrails,
       forts, bikeTrails, streetArt, museums, architecture, nature,
       history, trails, expositions, parks, sculptures,
       churches, mounds);
 }
 
-class MapPlaceFilterState extends State<MapPlaceFilter> {
+class PlaceFilterState extends State<PlaceFilter> {
   bool restPlaces; //poilsiavietes
   bool sceneryPlaces; //apzvalgos aiksteles
   bool hikingTrails; //pesciuju takai
@@ -49,7 +49,7 @@ class MapPlaceFilterState extends State<MapPlaceFilter> {
   bool churches;
   bool mounds; //piliakalniai
 
-  MapPlaceFilterState(this.restPlaces, this.sceneryPlaces, this.hikingTrails,
+  PlaceFilterState(this.restPlaces, this.sceneryPlaces, this.hikingTrails,
       this.forts, this.bikeTrails, this.streetArt, this.museums, this.architecture, this.nature,
       this.history, this.trails, this.expositions, this.parks, this.sculptures,
       this.churches, this.mounds);

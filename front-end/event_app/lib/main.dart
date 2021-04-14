@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './map.dart';
 import './menu.dart';
-import 'eventList.dart';
+import 'placeEventList.dart';
 
 void main() => runApp(const MyApp());
 

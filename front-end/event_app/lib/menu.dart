@@ -3,6 +3,7 @@ import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'client.dart';
 import 'accVerification.dart';
 import 'createPlaceEvent.dart';
+import 'myPlacesEvents.dart';
 
 class Menu extends StatefulWidget {
   final fb = FacebookLogin();
@@ -109,9 +110,9 @@ class _MenuState extends State<Menu> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           OutlinedButton(
-            child: Text('My events'),
+            child: Text('My places/events'),
             onPressed: () {
-              //_navigateAndDisplaySelection3(context);
+              _navigateAndDisplaySelection3(context);
             },
           ),
           OutlinedButton(
@@ -148,6 +149,18 @@ class _MenuState extends State<Menu> {
       context,
       MaterialPageRoute(
           builder: (context) => CreatePlaceEvent()),
+    );
+
+    setState(() {});
+  }
+
+  void _navigateAndDisplaySelection3(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyPlacesEvents()),
     );
 
     setState(() {});

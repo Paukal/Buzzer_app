@@ -308,3 +308,114 @@ Future<http.Response> sendNewPlaceDataToServer(String placeName, String placeTyp
     }),
   );
 }
+
+Future<List<Event>> fetchUserEventData(String userId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/user/events?userId=$userId'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+  EventCollection collection = EventCollection.fromJson(stringList);
+
+  print('Parsed: ${collection.list.first.address}');
+
+  return collection.list;
+}
+
+Future<List<Place>> fetchUserPlaceData(String userId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/user/places?userId=$userId'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+  PlaceCollection collection = PlaceCollection.fromJson(stringList);
+
+  print('Parsed: ${collection.list.first.address}');
+
+  return collection.list;
+}
+
+Future<Event> fetchEventViewData(String eventId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/eventview?eventId=$eventId'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+  EventCollection collection = EventCollection.fromJson(stringList);
+
+  print('Parsed: ${collection.list.first.address}');
+
+  return collection.list.first;
+}
+
+Future<http.Response> sendChangedEventDataToServer(String eventId, String eventName, String placeName, String link, String address, String city, String startDate, String public) {
+  var url = Uri.parse('http://10.0.2.2:8081/user/event/update');
+
+  return http.put(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'event_id': eventId,
+      'event_name': eventName,
+      'place_name': placeName,
+      'link': link,
+      'address': address,
+      'city': city,
+      'start_date': startDate,
+      'public': public,
+    }),
+  );
+}
+
+void sendDeleteEventDataToServer(String eventId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/user/event/delete?eventId=$eventId'); //instead of localhost
+  var response = await http.delete(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+}
+
+Future<Place> fetchPlaceViewData(String placeId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/placeview?placeId=$placeId'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+  PlaceCollection collection = PlaceCollection.fromJson(stringList);
+
+  print('Parsed: ${collection.list.first.address}');
+
+  return collection.list.first;
+}
+
+Future<http.Response> sendChangedPlaceDataToServer(String placeId, String placeName, String placeType, String link, String address, String city, String public) {
+  var url = Uri.parse('http://10.0.2.2:8081/user/place/update');
+
+  return http.put(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'place_id': placeId,
+      'place_name': placeName,
+      'place_type': placeType,
+      'link': link,
+      'address': address,
+      'city': city,
+      'public': public,
+    }),
+  );
+}
+
+void sendDeletePlaceDataToServer(String placeId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/user/place/delete?placeId=$placeId'); //instead of localhost
+  var response = await http.delete(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+}
