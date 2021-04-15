@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './map.dart';
 
 class MapEventFilter extends StatefulWidget {
   bool today;

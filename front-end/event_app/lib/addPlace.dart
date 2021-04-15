@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './map.dart';
 import 'menu.dart';
 import 'client.dart';
 

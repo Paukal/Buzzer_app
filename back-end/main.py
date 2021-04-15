@@ -13,6 +13,7 @@ from urllib.parse import urlparse, parse_qs
 
 hostName = "localhost"
 serverPort = 8081
+print('*Main Server is connecting to the PostgreSQL database...')
 conn = connect()
 cur = conn.cursor()
 

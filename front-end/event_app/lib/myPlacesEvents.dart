@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'client.dart';
-import 'eventFilter.dart';
 import 'menu.dart';
 import 'userEventView.dart';
 import 'userPlaceView.dart';

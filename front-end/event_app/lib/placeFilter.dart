@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import './map.dart';
 
 class PlaceFilter extends StatefulWidget {
   bool restPlaces; //poilsiavietes

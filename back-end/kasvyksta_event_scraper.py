@@ -12,6 +12,7 @@ class KasVykstaEventScraper(Thread):
 
     def run(self):
         while 1:
+            print('*KasVykstaEventScraper is connecting to the PostgreSQL database...')
             conn = connect()
             cur = conn.cursor()
 
@@ -62,7 +63,8 @@ class KasVykstaEventScraper(Thread):
                     print("Created event. id from db: ", id)
                     print("")
                 except psycopg2.errors.UniqueViolation:
-                    print("Event already exists in the DB")
+                    #print("Event already exists in the DB")
+                    pass
                 except psycopg2.errors.StringDataRightTruncation:
                     print("One of the event values too long for DB")
 

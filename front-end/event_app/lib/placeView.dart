@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'client.dart';
-import 'accVerification.dart';
-import 'createPlaceEvent.dart';
-import 'myPlacesEvents.dart';
 import 'placesParse.dart';
-import 'userPlaceUpdate.dart';
 
 class PlaceView extends StatefulWidget {
   String placeId;

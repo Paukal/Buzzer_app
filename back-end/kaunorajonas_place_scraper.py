@@ -14,6 +14,7 @@ class KaunorajonasPlaceScraper(Thread):
 
     def run(self):
         while 1:
+            print('*KaunorajonasPlaceScraper is connecting to the PostgreSQL database...')
             conn = connect()
             cur = conn.cursor()
 
@@ -97,7 +98,8 @@ class KaunorajonasPlaceScraper(Thread):
                     print("Created place. id from db: ", id)
                     print("")
                 except psycopg2.errors.UniqueViolation:
-                    print("Place already exists in the DB")
+                    #print("Place already exists in the DB")
+                    pass
                 except psycopg2.errors.StringDataRightTruncation:
                     print("One of the place values too long for DB")
 
