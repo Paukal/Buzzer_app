@@ -23,4 +23,17 @@ class Place {
 
   factory Place.fromJson(List<dynamic> json) =>
       Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7]);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'place_id': placeId,
+      'place_name': placeName,
+      'place_type': placeType,
+      'link': link,
+      'address': address,
+      'city': city,
+      'public': public,
+      'user_added_id': userAddedID,
+    };
+  }
 }

@@ -61,7 +61,11 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                         );
                       });
                 } else {
-                  return Text('Empty list');
+                  return Center(
+                      child: Text(
+                        'Empty list',
+                        textAlign: TextAlign.center,
+                      ));
                 }
               },
             )
@@ -93,7 +97,11 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                           },);
                       });
                 } else {
-                  return Text('Empty list');
+                  return Center(
+                      child: Text(
+                        'Empty list',
+                        textAlign: TextAlign.center,
+                      ));
                 }
               },
             )

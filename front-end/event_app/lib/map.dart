@@ -8,6 +8,7 @@ import 'placesParse.dart';
 import 'client.dart';
 import 'eventFilter.dart';
 import 'placeFilter.dart';
+import 'localDatabase.dart';
 
 class MapSample extends StatefulWidget {
   @override
@@ -15,6 +16,8 @@ class MapSample extends StatefulWidget {
 }
 
 class MapSampleState extends State<MapSample> {
+  var localDB = DB();
+
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _markers = HashSet<Marker>();
 
@@ -30,21 +33,21 @@ class MapSampleState extends State<MapSample> {
 
   //place filters:
   bool restPlaces = true; //poilsiavietes
-  bool sceneryPlaces = true; //apzvalgos aiksteles
-  bool hikingTrails = true; //pesciuju takai
+  bool sceneryPlaces = false; //apzvalgos aiksteles
+  bool hikingTrails = false; //pesciuju takai
   bool forts = false;
   bool bikeTrails = false; //dviraciu marsrutai
   bool streetArt = false;
   bool museums = false;
   bool architecture = false;
-  bool nature = true;
+  bool nature = false;
   bool history = false;
   bool trails = false; //marsrutai
   bool expositions = false;
-  bool parks = true;
+  bool parks = false;
   bool sculptures = false; //skulpturos ir paminklai
   bool churches = false;
-  bool mounds = true; //piliakalniai
+  bool mounds = false; //piliakalniai
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(54.898521, 23.903597),
@@ -240,6 +243,9 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<void> _markEvents() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Processing Events')));
+
     final GoogleMapController controller = await _controller.future;
     //final pos = await determinePosition();
     try {
@@ -271,11 +277,17 @@ class MapSampleState extends State<MapSample> {
         }
       });
     } catch (err) {
+      if(err.toString() == "type 'Null' is not a subtype of type 'Event' in type cast") {
+        _showMyDialog();
+      }
         print("exception: $err");
     }
   }
 
   Future<void> _markPlaces() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Processing Places')));
+
     final GoogleMapController controller = await _controller.future;
     //final pos = await determinePosition();
     try {
@@ -307,7 +319,37 @@ class MapSampleState extends State<MapSample> {
         }
       });
     } catch (err) {
+      if(err.toString() == "type 'Null' is not a subtype of type 'Place' in type cast") {
+        _showMyDialog();
+      }
       print("exception: $err");
     }
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('There are no events/places to show'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("The selected date or category doesn't contain any events or places"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

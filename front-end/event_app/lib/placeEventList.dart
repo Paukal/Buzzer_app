@@ -27,21 +27,21 @@ class _EventListState extends State<EventList> {
 
   //place filters:
   bool restPlaces = true; //poilsiavietes
-  bool sceneryPlaces = true; //apzvalgos aiksteles
-  bool hikingTrails = true; //pesciuju takai
+  bool sceneryPlaces = false; //apzvalgos aiksteles
+  bool hikingTrails = false; //pesciuju takai
   bool forts = false;
   bool bikeTrails = false; //dviraciu marsrutai
   bool streetArt = false;
   bool museums = false;
   bool architecture = false;
-  bool nature = true;
+  bool nature = false;
   bool history = false;
   bool trails = false; //marsrutai
   bool expositions = false;
-  bool parks = true;
+  bool parks = false;
   bool sculptures = false; //skulpturos ir paminklai
   bool churches = false;
-  bool mounds = true; //piliakalniai
+  bool mounds = false; //piliakalniai
 
   @override
   void initState() {
@@ -57,100 +57,110 @@ class _EventListState extends State<EventList> {
 
     return Material(
         child: Stack(children: [
-          dropdownValue == 'Events'
-              ? FutureBuilder<List<Event>>(
-            future: eventList,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
-              if (snapshot.hasData) {
-                events = snapshot.data!;
-                return ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final event = events[index];
+      dropdownValue == 'Events'
+          ? FutureBuilder<List<Event>>(
+              future: eventList,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
+                if (snapshot.hasData) {
+                  events = snapshot.data!;
+                  return ListView.builder(
+                      itemCount: events.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final event = events[index];
 
-                      return InkWell(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 50,
-                              color: Colors.amber[200],
-                              child: Center(child: Text(event.eventName)),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          _navigateAndDisplaySelection2(context, event.eventId);
-                        },
-                      );
-                    });
-              } else {
-                return Text('Empty list');
-              }
-            },
-          )
-              : Container(),
-          dropdownValue == 'Places'
-              ? FutureBuilder<List<Place>>(
-            future: placeList,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Place>> snapshot2) {
-              if (snapshot2.hasData) {
-                places = snapshot2.data!;
-                return ListView.builder(
-                    itemCount: places.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final place = places[index];
-
-                      return InkWell(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: 50,
-                              color: Colors.amber[200],
-                              child: Center(child: Text(place.placeName)),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          _navigateAndDisplaySelection3(context, place.placeId);
-                        },);
-                    });
-              } else {
-                return Text('Empty list');
-              }
-            },
-          )
-              : Container(),
-          Positioned(
-            top: 60,
-            right: 310,
-            left: 15,
-            child: DropdownButton<String>(
-              value: dropdownValue,
-              icon: const Icon(Icons.arrow_downward),
-              iconSize: 24,
-              elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
-              underline: Container(
-                height: 2,
-                color: Colors.deepPurpleAccent,
-              ),
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownValue = newValue!;
-                });
+                        return InkWell(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: 50,
+                                color: Colors.amber[200],
+                                child: Center(child: Text(event.eventName)),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            _navigateAndDisplaySelection2(
+                                context, event.eventId);
+                          },
+                        );
+                      });
+                } else {
+                  return Center(
+                      child: Text(
+                    'No events to show',
+                    textAlign: TextAlign.center,
+                  ));
+                }
               },
-              items: <String>['Events', 'Places']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
+            )
+          : Container(),
+      dropdownValue == 'Places'
+          ? FutureBuilder<List<Place>>(
+              future: placeList,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Place>> snapshot2) {
+                if (snapshot2.hasData) {
+                  places = snapshot2.data!;
+                  return ListView.builder(
+                      itemCount: places.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final place = places[index];
 
+                        return InkWell(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: 50,
+                                color: Colors.amber[200],
+                                child: Center(child: Text(place.placeName)),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            _navigateAndDisplaySelection3(
+                                context, place.placeId);
+                          },
+                        );
+                      });
+                } else {
+                  return Center(
+                      child: Text(
+                        'No places to show',
+                        textAlign: TextAlign.center,
+                      ));
+                }
+              },
+            )
+          : Container(),
+      Positioned(
+        top: 60,
+        right: 310,
+        left: 15,
+        child: DropdownButton<String>(
+          value: dropdownValue,
+          icon: const Icon(Icons.arrow_downward),
+          iconSize: 24,
+          elevation: 16,
+          style: const TextStyle(color: Colors.deepPurple),
+          underline: Container(
+            height: 2,
+            color: Colors.deepPurpleAccent,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              dropdownValue = newValue!;
+            });
+          },
+          items: <String>['Events', 'Places']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ),
       Align(
           alignment: Alignment(0.8, -0.75),
           child: SizedBox(
@@ -163,7 +173,7 @@ class _EventListState extends State<EventList> {
               child: const Icon(Icons.navigation, size: 20),
             ),
           )),
-        ]));
+    ]));
   }
 
   void _navigateAndDisplaySelection2(BuildContext context, int eventId) async {
@@ -171,8 +181,7 @@ class _EventListState extends State<EventList> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => EventView(eventId.toString())),
+      MaterialPageRoute(builder: (context) => EventView(eventId.toString())),
     );
 
     setState(() {});
@@ -183,8 +192,7 @@ class _EventListState extends State<EventList> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => PlaceView(placeId.toString())),
+      MaterialPageRoute(builder: (context) => PlaceView(placeId.toString())),
     );
 
     setState(() {});
@@ -193,17 +201,19 @@ class _EventListState extends State<EventList> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    if(dropdownValue == 'Events') {
+    if (dropdownValue == 'Events') {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Processing Events')));
+
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                MapEventFilter(
-                    filterDateToday,
-                    filterDateTomorrow,
-                    filterDateThisWeek,
-                    filterDateYesterday,
-                    filterDateLastWeek)),
+            builder: (context) => MapEventFilter(
+                filterDateToday,
+                filterDateTomorrow,
+                filterDateThisWeek,
+                filterDateYesterday,
+                filterDateLastWeek)),
       );
 
       setState(() {
@@ -217,16 +227,30 @@ class _EventListState extends State<EventList> {
       });
     }
 
-    if(dropdownValue == 'Places') {
+    if (dropdownValue == 'Places') {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Processing Places')));
+
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                PlaceFilter(
-                    restPlaces, sceneryPlaces, hikingTrails,
-                    forts, bikeTrails, streetArt, museums, architecture, nature,
-                    history, trails, expositions, parks, sculptures,
-                    churches, mounds)),
+            builder: (context) => PlaceFilter(
+                restPlaces,
+                sceneryPlaces,
+                hikingTrails,
+                forts,
+                bikeTrails,
+                streetArt,
+                museums,
+                architecture,
+                nature,
+                history,
+                trails,
+                expositions,
+                parks,
+                sculptures,
+                churches,
+                mounds)),
       );
 
       setState(() {
@@ -258,9 +282,22 @@ class _EventListState extends State<EventList> {
   }
 
   Future<List<Place>> assignPlaceList() async {
-    return await fetchPlaceList(restPlaces, sceneryPlaces, hikingTrails,
-        forts, bikeTrails, streetArt, museums, architecture, nature,
-        history, trails, expositions, parks, sculptures,
-        churches, mounds);
+    return await fetchPlaceList(
+        restPlaces,
+        sceneryPlaces,
+        hikingTrails,
+        forts,
+        bikeTrails,
+        streetArt,
+        museums,
+        architecture,
+        nature,
+        history,
+        trails,
+        expositions,
+        parks,
+        sculptures,
+        churches,
+        mounds);
   }
 }

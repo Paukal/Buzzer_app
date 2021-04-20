@@ -141,6 +141,9 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
   }
 
   void setLocation(String address) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Looking for location')));
+
     print(address);
     List<Location> locations = await locationFromAddress(address);
 

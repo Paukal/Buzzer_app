@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'dart:convert';
+import 'localDatabase.dart';
 
 Future<List<Event>> fetchEventList(
     bool filterDateToday,
@@ -9,7 +10,16 @@ Future<List<Event>> fetchEventList(
     bool filterDateThisWeek,
     bool filterDateYesterday,
     bool filterDateLastWeek) async {
-  List<Event> list = await fetchEventData();
+  var localDB = DB();
+
+  List<Event> list;
+  if(!localDB.eventsStored) {
+    List<Event> tempList;
+    tempList = await fetchEventData();
+    await localDB.insertEvents(tempList);
+  }
+  list = await localDB.events();
+
   List<Event> filteredList = new List.empty(growable: true);
   final DateTime now = DateTime.now();
 

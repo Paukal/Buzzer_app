@@ -24,4 +24,18 @@ class Event {
 
   factory Event.fromJson(List<dynamic> json) =>
       Event(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8]);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'event_id': eventId,
+      'event_name': eventName,
+      'place_name': placeName,
+      'link': link,
+      'address': address,
+      'city': city,
+      'start_date': startDate,
+      'public': public.toString(),
+      'user_added_id': userAddedID,
+    };
+  }
 }
