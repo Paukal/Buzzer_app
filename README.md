@@ -1,4 +1,4 @@
-# KaVeikt APP
+# Let's go APP
 Local event and activities mobile app
 
 Backend - Python
