@@ -32,13 +32,19 @@ class DB {
       onCreate: (db, version) {
         return db.execute(
           "CREATE TABLE events(event_id INTEGER PRIMARY KEY, event_name TEXT, "
-              "place_name TEXT, link TEXT, address TEXT, city TEXT, start_date "
-              "TEXT, public TEXT, user_added_id INTEGER)",
+          "place_name TEXT, link TEXT, address TEXT, city TEXT, start_date "
+          "TEXT, public TEXT, user_added_id INTEGER);"
+          "CREATE TABLE users(user_id TEXT PRIMARY KEY, access_token TEXT);",
         );
       },
+      onUpgrade: (db, oldVersion, newVersion) {
+      return db.execute(
+            "CREATE TABLE users(user_id TEXT PRIMARY KEY, access_token TEXT);",
+      );
+    },
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      version: 2,
+      version: 4,
     );
 
     return initial;
@@ -60,7 +66,7 @@ class DB {
     final Database db = await init();
     Iterator<Event> it = events.iterator;
 
-    while(it.moveNext()) {
+    while (it.moveNext()) {
       await db.insert(
         'events',
         it.current.toMap(),
@@ -109,5 +115,22 @@ class DB {
       where: "event_id = ?",
       whereArgs: [id],
     );
+  }
+
+  Future<void> insertUser(String id, String token) async {
+    final Database db = await init();
+
+    await db.insert(
+      'users',
+      {'user_id': id, 'access_token': token},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<Map<String, dynamic>> getUserLoginInfo() async {
+    final Database db = await init();
+    final List<Map<String, dynamic>> maps = await db.query('users');
+
+    return maps[0];
   }
 }

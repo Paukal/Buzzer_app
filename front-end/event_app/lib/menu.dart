@@ -4,6 +4,7 @@ import 'client.dart';
 import 'accVerification.dart';
 import 'createPlaceEvent.dart';
 import 'myPlacesEvents.dart';
+import 'localDatabase.dart';
 
 class Menu extends StatefulWidget {
   final fb = FacebookLogin();
@@ -14,6 +15,7 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   var s1 = LoggedInSingleton();
+  var localDB = DB();
 
   void _logInButtonChange() {
     setState(() {
@@ -38,6 +40,10 @@ class _MenuState extends State<Menu> {
   }
 
   Widget getLogInOutButton() {
+    if(!s1.loggedIn) {
+      checkUser();
+    }
+
     if (s1.loggedIn) {
       return OutlinedButton(
         child: Text('Log Out'),
@@ -90,6 +96,7 @@ class _MenuState extends State<Menu> {
             s1.email = email;
 
             _logInButtonChange();
+            localDB.insertUser(profile.userId, accessToken.token);
 
             break;
           case FacebookLoginStatus.cancel:
@@ -104,11 +111,36 @@ class _MenuState extends State<Menu> {
     );
   }
 
+  Future<void> checkUser() async {
+    try {
+      Map<String, dynamic> userIdToken = await localDB.getUserLoginInfo();
+      print(userIdToken.toString());
+
+      String id = userIdToken.values.elementAt(0).toString();
+      String token = userIdToken.values.elementAt(1).toString();
+
+      Map<String, dynamic> userData = await getUserInfoFB(id, token);
+
+      s1.firstName = userData.values.elementAt(0).toString();
+      s1.lastName = userData.values.elementAt(1).toString();
+      s1.email = userData.values.elementAt(2).toString();
+      s1.userId = userData.values.elementAt(3).toString();
+
+      _logInButtonChange();
+
+    } catch (err) {
+      print("exception: $err");
+    }
+  }
+
   Widget getAccountButtons() {
+    String name = s1.firstName;
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text("Hello, $name!"),
           OutlinedButton(
             child: Text('My places/events'),
             onPressed: () {

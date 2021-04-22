@@ -428,3 +428,16 @@ void sendDeletePlaceDataToServer(String placeId) async {
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 }
+
+Future<Map<String, dynamic>> getUserInfoFB(String userId, String accessToken) async {
+  var url = Uri.parse('https://graph.facebook.com/$userId?fields=first_name,last_name,email&access_token=$accessToken'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  Map<String, dynamic> collection = jsonDecode(response.body);
+
+  print('Parsed: $collection');
+
+  return collection;
+}
