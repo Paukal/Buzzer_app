@@ -72,11 +72,34 @@ class _EventListState extends State<EventList> {
                         return InkWell(
                           child: Column(
                             children: <Widget>[
+                              Image.network(event.photoUrl),
                               Container(
                                 height: 50,
                                 color: Colors.amber[200],
                                 child: Center(child: Text(event.eventName)),
                               ),
+                              Container(
+                                height: 50,
+                                color: Colors.amber[200],
+                                child: Row(
+                                  children: [
+                                    Text(" Like "),
+                                    Text(" Comment "),
+                                    Text(" Share"),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  alignment: Alignment.topLeft,
+                                  height: 50,
+                                  color: Colors.amber[200],
+                                  child: Column(
+                                    children: [
+                                      Text("Likes: 152", textAlign: TextAlign.right),
+                                      Text("Seen: 2 times", textAlign: TextAlign.right),
+                                      Text("Created by:", textAlign: TextAlign.left)
+                                    ],
+                                  ))
                             ],
                           ),
                           onTap: () {
@@ -110,11 +133,34 @@ class _EventListState extends State<EventList> {
                         return InkWell(
                           child: Column(
                             children: <Widget>[
+                              Image.network(place.photoUrl),
                               Container(
                                 height: 50,
                                 color: Colors.amber[200],
                                 child: Center(child: Text(place.placeName)),
                               ),
+                              Container(
+                                height: 50,
+                                color: Colors.amber[200],
+                                child: Row(
+                                  children: [
+                                    Text(" Like "),
+                                    Text(" Comment "),
+                                    Text(" Share"),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  alignment: Alignment.topLeft,
+                                  height: 50,
+                                  color: Colors.amber[200],
+                                  child: Column(
+                                    children: [
+                                      Text("Likes: 152", textAlign: TextAlign.right),
+                                      Text("Seen: 2 times", textAlign: TextAlign.right),
+                                      Text("Created by:", textAlign: TextAlign.left)
+                                    ],
+                                  ))
                             ],
                           ),
                           onTap: () {
@@ -126,9 +172,9 @@ class _EventListState extends State<EventList> {
                 } else {
                   return Center(
                       child: Text(
-                        'No places to show',
-                        textAlign: TextAlign.center,
-                      ));
+                    'No places to show',
+                    textAlign: TextAlign.center,
+                  ));
                 }
               },
             )
@@ -202,8 +248,8 @@ class _EventListState extends State<EventList> {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     if (dropdownValue == 'Events') {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Processing Events')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Processing Events')));
 
       final result = await Navigator.push(
         context,
@@ -228,8 +274,8 @@ class _EventListState extends State<EventList> {
     }
 
     if (dropdownValue == 'Places') {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Processing Places')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Processing Places')));
 
       final result = await Navigator.push(
         context,

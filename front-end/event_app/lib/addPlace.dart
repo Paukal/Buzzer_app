@@ -27,6 +27,7 @@ class AddPlaceState extends State<AddPlace> {
   String placeType = 'restPlaces';
   String link = "";
   String userId = "";
+  String photoUrl = "";
 
   @override
   Widget build(BuildContext context) {
@@ -144,9 +145,10 @@ class AddPlaceState extends State<AddPlace> {
                           SnackBar(content: Text('Processing Data')));
 
                       userId = s1.userId;
+                      photoUrl = "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
 
                       sendNewPlaceDataToServer(placeName, placeType, link,
-                          street, city, public.toString(), userId);
+                          street, city, public.toString(), userId, photoUrl);
                     }
                   },
                   child: Text('Submit'),

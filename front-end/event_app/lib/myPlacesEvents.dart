@@ -48,6 +48,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                         return InkWell(
                           child: Column(
                             children: <Widget>[
+                              Image.network(event.photoUrl),
                               Container(
                                 height: 50,
                                 color: Colors.amber[200],
@@ -63,7 +64,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                 } else {
                   return Center(
                       child: Text(
-                        'Empty list',
+                        'No events to show',
                         textAlign: TextAlign.center,
                       ));
                 }
@@ -85,6 +86,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                         return InkWell(
                         child: Column(
                           children: <Widget>[
+                            Image.network(place.photoUrl),
                             Container(
                               height: 50,
                               color: Colors.amber[200],
@@ -99,7 +101,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                 } else {
                   return Center(
                       child: Text(
-                        'Empty list',
+                        'No places to show',
                         textAlign: TextAlign.center,
                       ));
                 }

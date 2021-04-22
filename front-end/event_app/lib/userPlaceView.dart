@@ -44,6 +44,7 @@ class _UserPlaceViewState extends State<UserPlaceView> {
                         placeData = snapshot.data!;
                         return Column(
                           children: <Widget>[
+                            Image.network(placeData.photoUrl),
                             Container(
                               height: 50,
                               color: Colors.amber[200],

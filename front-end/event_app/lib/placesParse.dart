@@ -18,11 +18,12 @@ class Place {
   final String city;
   final bool public;
   final String userAddedID;
+  final String photoUrl;
 
-  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID);
+  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID, this.photoUrl);
 
   factory Place.fromJson(List<dynamic> json) =>
-      Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7]);
+      Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8]);
 
   Map<String, dynamic> toMap() {
     return {
@@ -34,6 +35,7 @@ class Place {
       'city': city,
       'public': public,
       'user_added_id': userAddedID,
+      'photo_url' : photoUrl,
     };
   }
 }

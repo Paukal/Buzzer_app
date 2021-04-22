@@ -13,7 +13,7 @@ Future<List<Event>> fetchEventList(
   var localDB = DB();
 
   List<Event> list;
-  if(!localDB.eventsStored) {
+  if (!localDB.eventsStored) {
     List<Event> tempList;
     tempList = await fetchEventData();
     await localDB.insertEvents(tempList);
@@ -27,7 +27,8 @@ Future<List<Event>> fetchEventList(
     Iterator<Event> it = list.iterator;
     while (it.moveNext()) {
       final date = DateTime.parse(it.current.startDate);
-      if (date.difference(now).inDays < -1 && date.difference(now).inDays > -8 &&
+      if (date.difference(now).inDays < -1 &&
+          date.difference(now).inDays > -8 &&
           DateTime.parse(it.current.startDate).isBefore(now)) {
         filteredList.add(it.current);
       }
@@ -38,7 +39,7 @@ Future<List<Event>> fetchEventList(
     while (it.moveNext()) {
       final date = DateTime.parse(it.current.startDate);
       if ((date.day - now.day == -1 || date.day - now.day > 26) &&
-      date.difference(now).inDays == -1 &&
+          date.difference(now).inDays == -1 &&
           DateTime.parse(it.current.startDate).isBefore(now)) {
         filteredList.add(it.current);
       }
@@ -48,7 +49,8 @@ Future<List<Event>> fetchEventList(
     Iterator<Event> it = list.iterator;
     while (it.moveNext()) {
       final date = DateTime.parse(it.current.startDate);
-      if (date.difference(now).inDays > 1 && date.difference(now).inDays < 8 &&
+      if (date.difference(now).inDays > 1 &&
+          date.difference(now).inDays < 8 &&
           DateTime.parse(it.current.startDate).isAfter(now)) {
         filteredList.add(it.current);
       }
@@ -85,12 +87,19 @@ Future<List<Event>> fetchEventData() async {
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
-  EventCollection collection = EventCollection.fromJson(stringList);
+  try {
+    if (response.body.isNotEmpty) {
+      List<dynamic> stringList = jsonDecode(response.body);
+      EventCollection collection = EventCollection.fromJson(stringList);
+      print('Parsed: ${collection.list.first.address}');
 
-  print('Parsed: ${collection.list.first.address}');
+      return collection.list;
+    }
+  } catch (err) {
+    print("Exception: $err");
+  }
 
-  return collection.list;
+  return List.empty();
 }
 
 Future<List<Place>> fetchPlaceList(
@@ -110,7 +119,16 @@ Future<List<Place>> fetchPlaceList(
     bool sculptures,
     bool churches,
     bool mounds) async {
-  List<Place> list = await fetchPlaceData();
+  var localDB = DB();
+
+  List<Place> list;
+  if (!localDB.placesStored) {
+    List<Place> tempList;
+    tempList = await fetchPlaceData();
+    await localDB.insertPlaces(tempList);
+  }
+  list = await localDB.places();
+
   List<Place> filteredList = new List.empty(growable: true);
 
   if (restPlaces) {
@@ -252,15 +270,23 @@ Future<List<Place>> fetchPlaceData() async {
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
-  PlaceCollection collection = PlaceCollection.fromJson(stringList);
+  try {
+    if (response.body.isNotEmpty) {
+      List<dynamic> stringList = jsonDecode(response.body);
+      PlaceCollection collection = PlaceCollection.fromJson(stringList);
+      print('Parsed: ${collection.list.first.address}');
 
-  print('Parsed: ${collection.list.first.address}');
+      return collection.list;
+    }
+  } catch (err) {
+    print("Exception: $err");
+  }
 
-  return collection.list;
+  return List.empty();
 }
 
-Future<http.Response> sendUserDataToServer(String name, String lastName, String email, String id) {
+Future<http.Response> sendUserDataToServer(
+    String name, String lastName, String email, String id) {
   var url = Uri.parse('http://10.0.2.2:8081/user/connected');
 
   return http.post(
@@ -277,7 +303,16 @@ Future<http.Response> sendUserDataToServer(String name, String lastName, String 
   );
 }
 
-Future<http.Response> sendNewEventDataToServer(String eventName, String placeName, String link, String address, String city, String startDate, String public, String userId) {
+Future<http.Response> sendNewEventDataToServer(
+    String eventName,
+    String placeName,
+    String link,
+    String address,
+    String city,
+    String startDate,
+    String public,
+    String userId,
+    String photoUrl) {
   var url = Uri.parse('http://10.0.2.2:8081/user/event');
 
   return http.post(
@@ -294,11 +329,20 @@ Future<http.Response> sendNewEventDataToServer(String eventName, String placeNam
       'start_date': startDate,
       'public': public,
       'user_id': userId,
+      "photo_url" : photoUrl,
     }),
   );
 }
 
-Future<http.Response> sendNewPlaceDataToServer(String placeName, String placeType, String link, String address, String city, String public, String userId) {
+Future<http.Response> sendNewPlaceDataToServer(
+    String placeName,
+    String placeType,
+    String link,
+    String address,
+    String city,
+    String public,
+    String userId,
+    String photoUrl) {
   var url = Uri.parse('http://10.0.2.2:8081/user/place');
 
   return http.post(
@@ -314,12 +358,14 @@ Future<http.Response> sendNewPlaceDataToServer(String placeName, String placeTyp
       'city': city,
       'public': public,
       'user_id': userId,
+      'photo_url' : photoUrl,
     }),
   );
 }
 
 Future<List<Event>> fetchUserEventData(String userId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/user/events?userId=$userId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/events?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -333,7 +379,8 @@ Future<List<Event>> fetchUserEventData(String userId) async {
 }
 
 Future<List<Place>> fetchUserPlaceData(String userId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/user/places?userId=$userId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/places?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -347,7 +394,8 @@ Future<List<Place>> fetchUserPlaceData(String userId) async {
 }
 
 Future<Event> fetchEventViewData(String eventId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/eventview?eventId=$eventId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/eventview?eventId=$eventId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -360,7 +408,15 @@ Future<Event> fetchEventViewData(String eventId) async {
   return collection.list.first;
 }
 
-Future<http.Response> sendChangedEventDataToServer(String eventId, String eventName, String placeName, String link, String address, String city, String startDate, String public) {
+Future<http.Response> sendChangedEventDataToServer(
+    String eventId,
+    String eventName,
+    String placeName,
+    String link,
+    String address,
+    String city,
+    String startDate,
+    String public) {
   var url = Uri.parse('http://10.0.2.2:8081/user/event/update');
 
   return http.put(
@@ -382,14 +438,16 @@ Future<http.Response> sendChangedEventDataToServer(String eventId, String eventN
 }
 
 void sendDeleteEventDataToServer(String eventId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/user/event/delete?eventId=$eventId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/event/delete?eventId=$eventId'); //instead of localhost
   var response = await http.delete(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 }
 
 Future<Place> fetchPlaceViewData(String placeId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/placeview?placeId=$placeId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/placeview?placeId=$placeId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -402,7 +460,14 @@ Future<Place> fetchPlaceViewData(String placeId) async {
   return collection.list.first;
 }
 
-Future<http.Response> sendChangedPlaceDataToServer(String placeId, String placeName, String placeType, String link, String address, String city, String public) {
+Future<http.Response> sendChangedPlaceDataToServer(
+    String placeId,
+    String placeName,
+    String placeType,
+    String link,
+    String address,
+    String city,
+    String public) {
   var url = Uri.parse('http://10.0.2.2:8081/user/place/update');
 
   return http.put(
@@ -423,14 +488,17 @@ Future<http.Response> sendChangedPlaceDataToServer(String placeId, String placeN
 }
 
 void sendDeletePlaceDataToServer(String placeId) async {
-  var url = Uri.parse('http://10.0.2.2:8081/user/place/delete?placeId=$placeId'); //instead of localhost
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/place/delete?placeId=$placeId'); //instead of localhost
   var response = await http.delete(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 }
 
-Future<Map<String, dynamic>> getUserInfoFB(String userId, String accessToken) async {
-  var url = Uri.parse('https://graph.facebook.com/$userId?fields=first_name,last_name,email&access_token=$accessToken'); //instead of localhost
+Future<Map<String, dynamic>> getUserInfoFB(
+    String userId, String accessToken) async {
+  var url = Uri.parse(
+      'https://graph.facebook.com/$userId?fields=first_name,last_name,email&access_token=$accessToken'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');

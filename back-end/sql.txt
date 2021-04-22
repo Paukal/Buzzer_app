@@ -7,7 +7,8 @@ CREATE TABLE events (
    city VARCHAR ( 150 ),
    start_date TIMESTAMP,
    public BOOLEAN,
-   user_added_id NUMERIC
+   user_added_id NUMERIC,
+   photo_url VARCHAR ( 250 )
 );
 
 CREATE TABLE places (
@@ -18,7 +19,8 @@ CREATE TABLE places (
    address VARCHAR ( 150 ),
    city VARCHAR ( 150 ),
    public BOOLEAN,
-   user_added_id NUMERIC
+   user_added_id NUMERIC,
+   photo_url VARCHAR ( 250 )
 );
 
 CREATE TABLE users (

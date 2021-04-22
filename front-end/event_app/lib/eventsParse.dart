@@ -19,11 +19,12 @@ class Event {
   final String startDate;
   final bool public;
   final String userAddedID;
+  final String photoUrl;
 
-  Event(this.eventId, this.eventName, this.placeName, this.link, this.address, this.city, this.startDate, this.public, this.userAddedID);
+  Event(this.eventId, this.eventName, this.placeName, this.link, this.address, this.city, this.startDate, this.public, this.userAddedID, this.photoUrl);
 
   factory Event.fromJson(List<dynamic> json) =>
-      Event(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8]);
+      Event(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8], json[9]);
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,6 +37,7 @@ class Event {
       'start_date': startDate,
       'public': public.toString(),
       'user_added_id': userAddedID,
+      'photo_url' : photoUrl,
     };
   }
 }

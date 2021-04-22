@@ -248,12 +248,13 @@ class MyServer(BaseHTTPRequestHandler):
             start_date = values["start_date"]
             public = values["public"]
             userId = values["user_id"]
+            photoUrl = values["photo_url"]
 
-            sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
+            sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id, photo_url) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
 
             try:
-                cur.execute(sql, (eventName, placeName, link, address, city, start_date, public, userId))
+                cur.execute(sql, (eventName, placeName, link, address, city, start_date, public, userId, photoUrl))
                 id = cur.fetchone()[0]
 
                 print("")
@@ -289,12 +290,13 @@ class MyServer(BaseHTTPRequestHandler):
             city = values["city"]
             public = values["public"]
             userId = values["user_id"]
+            photoUrl = values["photo_url"]
 
-            sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
+            sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
 
             try:
-                cur.execute(sql, (placeName, placeType, link, address, city, public, userId))
+                cur.execute(sql, (placeName, placeType, link, address, city, public, userId, photoUrl))
                 id = cur.fetchone()[0]
 
                 print("")

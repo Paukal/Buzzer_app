@@ -58,11 +58,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.wb_sunny_outlined),
-            label: 'Locations',
+            label: 'MAP',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.apps_rounded),
-            label: 'Events',
+            label: 'Explore',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),

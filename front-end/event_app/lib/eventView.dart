@@ -43,6 +43,7 @@ class _EventViewState extends State<EventView> {
                         eventData = snapshot.data!;
                         return Column(
                           children: <Widget>[
+                            Image.network(eventData.photoUrl),
                             Container(
                               height: 50,
                               color: Colors.amber[200],

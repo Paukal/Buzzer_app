@@ -30,6 +30,7 @@ class AddEventState extends State<AddEvent> {
   String link = "";
   String startDate = "";
   String userId = "";
+  String photoUrl = "";
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +148,9 @@ class AddEventState extends State<AddEvent> {
                         placeName = enteredAddress;
                       }
 
-                      sendNewEventDataToServer(eventName, placeName, link, street, city, startDate, public.toString(), userId);
+                      photoUrl = "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
+
+                      sendNewEventDataToServer(eventName, placeName, link, street, city, startDate, public.toString(), userId, photoUrl);
                     }
                   },
                   child: Text('Submit'),

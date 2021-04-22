@@ -79,6 +79,13 @@ class KaunorajonasPlaceScraper(Thread):
                 public = "true"
                 user_added_id = "-1"
 
+                photo_url = ""
+
+                try:
+                    photo_url = photoDiv.find("div").find("div")['data-bg']
+                except TypeError:
+                    photo_url = "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg"
+
                 '''print(placeName)
                 print(placeType)
                 print(link)
@@ -86,13 +93,13 @@ class KaunorajonasPlaceScraper(Thread):
                 print(city)
                 print("")'''
 
-                lst.append((placeName, placeType, link, address, city, public, user_added_id))
+                lst.append((placeName, placeType, link, address, city, public, user_added_id, photo_url))
 
-                sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
+                sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
 
                 try:
-                    cur.execute(sql, (placeName, placeType, link, address, city, public, user_added_id))
+                    cur.execute(sql, (placeName, placeType, link, address, city, public, user_added_id, photo_url))
                     id = cur.fetchone()[0]
 
                     print("Created place. id from db: ", id)
