@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Place filtering logic
+* */
+
 import 'package:flutter/material.dart';
 
 class PlaceFilter extends StatefulWidget {

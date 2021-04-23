@@ -1,3 +1,9 @@
+'''
+Lets Go App
+Paulius Tomas Kalvers
+DB configuration logic
+'''
+
 from configparser import ConfigParser
 
 

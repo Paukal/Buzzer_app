@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Main map logic
+* */
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';

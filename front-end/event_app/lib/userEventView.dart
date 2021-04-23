@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Single event created by user preview logic
+* */
+
 import 'package:flutter/material.dart';
 import 'client.dart';
 import 'eventsParse.dart';

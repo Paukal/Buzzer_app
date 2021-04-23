@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Listing of events/places logic
+* */
+
 import 'package:flutter/material.dart';
 import 'eventsParse.dart';
 import 'placesParse.dart';

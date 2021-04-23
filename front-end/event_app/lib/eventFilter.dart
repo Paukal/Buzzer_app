@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Event filtering logic
+* */
+
 import 'package:flutter/material.dart';
 
 class MapEventFilter extends StatefulWidget {

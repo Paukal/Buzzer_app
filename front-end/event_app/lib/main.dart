@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Main screen orientation and layout logic
+* */
+
 import 'package:flutter/material.dart';
 import 'map.dart';
 import 'menu.dart';

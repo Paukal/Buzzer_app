@@ -1,3 +1,9 @@
+'''
+Lets Go App
+Paulius Tomas Kalvers
+DB connection logic
+'''
+
 #!/usr/bin/python
 import psycopg2
 from db_config import config

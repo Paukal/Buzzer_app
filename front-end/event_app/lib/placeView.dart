@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Single place preview logic
+* */
+
 import 'package:flutter/material.dart';
 import 'client.dart';
 import 'placesParse.dart';

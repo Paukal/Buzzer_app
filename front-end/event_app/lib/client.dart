@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Requests, responses and communication with server logic
+* */
+
 import 'package:http/http.dart' as http;
 import 'eventsParse.dart';
 import 'placesParse.dart';

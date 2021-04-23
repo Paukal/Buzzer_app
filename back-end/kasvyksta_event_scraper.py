@@ -1,3 +1,9 @@
+'''
+Lets Go App
+Paulius Tomas Kalvers
+Event scraper logic
+'''
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import psycopg2

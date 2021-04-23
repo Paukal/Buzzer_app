@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Update event created by user logic
+* */
+
 import 'package:flutter/material.dart';
 import 'client.dart';
 import 'eventsParse.dart';

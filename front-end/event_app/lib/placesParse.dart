@@ -1,4 +1,8 @@
-
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Place object and place parsing logic
+* */
 
 class PlaceCollection {
   final List<Place> list;

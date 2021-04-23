@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Add event created by user logic
+* */
+
 import 'package:flutter/material.dart';
 import 'menu.dart';
 import 'client.dart';

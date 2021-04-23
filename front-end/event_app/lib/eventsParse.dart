@@ -1,4 +1,8 @@
-
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Event object and event parsing logic
+* */
 
 class EventCollection {
   final List<Event> list;

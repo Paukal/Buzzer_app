@@ -1,3 +1,9 @@
+'''
+Lets Go App
+Paulius Tomas Kalvers
+Place scraper logic
+'''
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
 import psycopg2

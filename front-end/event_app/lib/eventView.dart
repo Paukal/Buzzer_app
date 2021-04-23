@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Single event preview logic
+* */
+
 import 'package:flutter/material.dart';
 import 'client.dart';
 import 'eventsParse.dart';

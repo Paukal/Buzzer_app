@@ -1,3 +1,9 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* SQLite DB logic
+* */
+
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
