@@ -12,6 +12,7 @@ import 'eventFilter.dart';
 import 'placeFilter.dart';
 import 'eventView.dart';
 import 'placeView.dart';
+import 'menu.dart';
 
 class EventList extends StatefulWidget {
   @override
@@ -19,6 +20,8 @@ class EventList extends StatefulWidget {
 }
 
 class _EventListState extends State<EventList> {
+  var s1 = LoggedInSingleton();
+
   late Future<List<Event>> eventList;
   late Future<List<Place>> placeList;
 
@@ -56,6 +59,8 @@ class _EventListState extends State<EventList> {
     placeList = assignPlaceList();
   }
 
+  bool justLiked = false;
+
   @override
   Widget build(BuildContext context) {
     List<Event> events;
@@ -70,6 +75,8 @@ class _EventListState extends State<EventList> {
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
                 if (snapshot.hasData) {
                   events = snapshot.data!;
+
+
                   return ListView.builder(
                       itemCount: events.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -89,7 +96,24 @@ class _EventListState extends State<EventList> {
                                 color: Colors.amber[200],
                                 child: Row(
                                   children: [
-                                    Text(" Like "),
+                                    s1.loggedIn ? IconButton(
+                                      icon: event.liked ? const Icon(Icons.whatshot_outlined) : const Icon(Icons.whatshot_rounded),
+                                      tooltip: 'Like',
+                                      onPressed: () {
+                                        setState(() {
+                                          event.liked = !event.liked;
+
+                                          if(event.liked == true){
+                                            pressedLikeEvent(event);
+                                            justLiked = true;
+                                          }
+                                          else {
+                                            unpressedLikeEvent(event);
+                                            justLiked = false;
+                                          }
+                                        });
+                                      },
+                                    ) : Container(),
                                     Text(" Comment "),
                                     Text(" Share"),
                                   ],
@@ -101,8 +125,8 @@ class _EventListState extends State<EventList> {
                                   color: Colors.amber[200],
                                   child: Column(
                                     children: [
-                                      Text("Likes: 152", textAlign: TextAlign.right),
-                                      Text("Seen: 2 times", textAlign: TextAlign.right),
+                                      event.liked && justLiked ? Text("Likes: ${(int.parse(event.likeCount) + 1).toString()}", textAlign: TextAlign.right) : Text("Likes: ${event.likeCount}", textAlign: TextAlign.right),
+                                      Text("Seen: ${event.clicks}", textAlign: TextAlign.right),
                                       Text("Created by:", textAlign: TextAlign.left)
                                     ],
                                   ))
@@ -111,6 +135,7 @@ class _EventListState extends State<EventList> {
                           onTap: () {
                             _navigateAndDisplaySelection2(
                                 context, event.eventId);
+                            eventClick(event.eventId.toString());
                           },
                         );
                       });
@@ -150,7 +175,24 @@ class _EventListState extends State<EventList> {
                                 color: Colors.amber[200],
                                 child: Row(
                                   children: [
-                                    Text(" Like "),
+                                    s1.loggedIn ? IconButton(
+                                      icon: place.liked ? const Icon(Icons.whatshot_outlined) : const Icon(Icons.whatshot_rounded),
+                                      tooltip: 'Like',
+                                      onPressed: () {
+                                        setState(() {
+                                          place.liked = !place.liked;
+
+                                          if(place.liked == true){
+                                            pressedLikePlace(place);
+                                            justLiked = true;
+                                          }
+                                          else {
+                                            unpressedLikePlace(place);
+                                            justLiked = false;
+                                          }
+                                        });
+                                      },
+                                    ) : Container(),
                                     Text(" Comment "),
                                     Text(" Share"),
                                   ],
@@ -162,7 +204,7 @@ class _EventListState extends State<EventList> {
                                   color: Colors.amber[200],
                                   child: Column(
                                     children: [
-                                      Text("Likes: 152", textAlign: TextAlign.right),
+                                      place.liked && justLiked ? Text("Likes: ${(int.parse(place.likeCount) + 1).toString()}", textAlign: TextAlign.right) : Text("Likes: ${place.likeCount}", textAlign: TextAlign.right),
                                       Text("Seen: 2 times", textAlign: TextAlign.right),
                                       Text("Created by:", textAlign: TextAlign.left)
                                     ],
@@ -228,6 +270,24 @@ class _EventListState extends State<EventList> {
     ]));
   }
 
+  Future<void> pressedLikeEvent(Event event) async {
+    event.likeId = await sendPressedLike(
+        s1.userId, "event", event.eventId.toString());
+  }
+
+  void unpressedLikeEvent(Event event) {
+    sendUnpressedLike(event.likeId);
+  }
+
+  Future<void> pressedLikePlace(Place place) async {
+    place.likeId = await sendPressedLike(
+        s1.userId, "place", place.placeId.toString());
+  }
+
+  void unpressedLikePlace(Place place) {
+    sendUnpressedLike(place.likeId);
+  }
+
   void _navigateAndDisplaySelection2(BuildContext context, int eventId) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
@@ -276,6 +336,7 @@ class _EventListState extends State<EventList> {
         filterDateLastWeek = result[4];
 
         eventList = assignEventList();
+
       });
     }
 
@@ -324,6 +385,7 @@ class _EventListState extends State<EventList> {
         mounds = result[15]; //piliakalniai
 
         placeList = assignPlaceList();
+
       });
     }
   }

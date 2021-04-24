@@ -136,6 +136,46 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
+        if "/user/likes" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            userId = ' '.join([str(elem) for elem in query_components["userId"]])
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = int(' '.join([str(elem) for elem in query_components["objectId"]]))
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "SELECT * FROM public.likes WHERE user_id = %s and object = %s and object_id = %s ORDER BY like_id ASC"
+
+            list = []
+
+            try:
+                cur.execute(sql, (userId, object, objectId))
+                list = cur.fetchall()
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
         if "/eventview" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             eventId = query_components["eventId"]
@@ -194,6 +234,35 @@ class MyServer(BaseHTTPRequestHandler):
             #print("DB returned json: ", json_string.decode())
 
             self.wfile.write(json_string)
+            self.wfile.flush()
+
+        if "/like/count" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = int(' '.join([str(elem) for elem in query_components["objectId"]]))
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = %s and object_id = %s"
+
+            exists = ""
+
+            try:
+                cur.execute(sql, (object, objectId))
+                num = cur.fetchone()[0]
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(bytes(str(num).encode('utf-8')))
             self.wfile.flush()
 
     def do_POST(self):
@@ -255,12 +324,13 @@ class MyServer(BaseHTTPRequestHandler):
             public = values["public"]
             userId = values["user_id"]
             photoUrl = values["photo_url"]
+            clicks = 0
 
-            sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id, photo_url) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
+            sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id, photo_url, clicks) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
 
             try:
-                cur.execute(sql, (eventName, placeName, link, address, city, start_date, public, userId, photoUrl))
+                cur.execute(sql, (eventName, placeName, link, address, city, start_date, public, userId, photoUrl, clicks))
                 id = cur.fetchone()[0]
 
                 print("")
@@ -321,6 +391,44 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+            self.wfile.flush()
+
+        if self.path == "/like/press":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                    str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+            values = json.loads(post_data.decode('utf-8'))
+
+            userId = values["user_id"]
+            object = values["object"]
+            objectId = values["object_id"]
+            date = values["date"]
+
+            sql = "INSERT INTO likes(user_id, object, object_id, date) \
+            VALUES (%s,%s,%s,%s) RETURNING like_id;"
+
+            try:
+                cur.execute(sql, (userId, object, objectId, date))
+                id = cur.fetchone()[0]
+
+                print("")
+                print("Created new like by user. id from db: ", id)
+                print("")
+            except psycopg2.errors.UniqueViolation:
+                print("Like already exists in the DB")
+            except psycopg2.errors.StringDataRightTruncation:
+                print("One of the like values too long for DB")
+            except psycopg2.errors.NumericValueOutOfRange:
+                print("ID of the like is too long for DB")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(bytes(str(id).encode('utf-8')))
             self.wfile.flush()
 
     def do_PUT(self):
@@ -408,6 +516,41 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
+        if self.path == "/event/click":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                    str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+            values = json.loads(post_data.decode('utf-8'))
+
+            eventId = values["event_id"]
+
+            sql = "UPDATE events SET clicks = clicks + 1 \
+            WHERE event_id = %s RETURNING event_id;"
+
+            try:
+                cur.execute(sql, eventId)
+                id = cur.fetchone()[0]
+
+                print("")
+                print("Updated event by user. id from db: ", id)
+                print("")
+            except psycopg2.errors.UniqueViolation:
+                print("User already exists in the DB")
+            except psycopg2.errors.StringDataRightTruncation:
+                print("One of the user values too long for DB")
+            except psycopg2.errors.NumericValueOutOfRange:
+                print("ID of the user is too long for DB")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
+            self.wfile.flush()
+
     def do_DELETE(self):
 
         if "/user/event/delete" in self.path:
@@ -438,6 +581,23 @@ class MyServer(BaseHTTPRequestHandler):
             sql = "DELETE FROM public.places WHERE place_id = %s"
 
             cur.execute(sql, placeId)
+
+            conn.commit()
+            #print("raw list: ", list)
+
+            self.wfile.flush()
+
+        if "/like/unpress" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            likeId = query_components["likeId"]
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "DELETE FROM public.likes WHERE like_id = %s"
+
+            cur.execute(sql, likeId)
 
             conn.commit()
             #print("raw list: ", list)

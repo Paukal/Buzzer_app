@@ -23,6 +23,9 @@ class Place {
   final bool public;
   final String userAddedID;
   final String photoUrl;
+  bool liked = false;
+  String likeId = "";
+  String likeCount = "0";
 
   Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID, this.photoUrl);
 

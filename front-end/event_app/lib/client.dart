@@ -9,6 +9,7 @@ import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'dart:convert';
 import 'localDatabase.dart';
+import 'menu.dart';
 
 Future<List<Event>> fetchEventList(
     bool filterDateToday,
@@ -84,6 +85,10 @@ Future<List<Event>> fetchEventList(
       }
     }
   }
+  for (int i = 0; i < filteredList.length; i++) {
+    await getEventLikes(filteredList[i]);
+  }
+
   return filteredList;
 }
 
@@ -106,6 +111,20 @@ Future<List<Event>> fetchEventData() async {
   }
 
   return List.empty();
+}
+
+Future<void> getEventLikes(Event event) async {
+  var s1 = LoggedInSingleton();
+  if(s1.loggedIn) {
+    event.likeId =
+    await getLikeStatus(s1.userId, "event", event.eventId.toString());
+
+    if (event.likeId != "") {
+      event.liked = true;
+
+      event.likeCount = await getLikeCount("event", event.eventId.toString());
+    }
+  }
 }
 
 Future<List<Place>> fetchPlaceList(
@@ -267,6 +286,10 @@ Future<List<Place>> fetchPlaceList(
     }
   }
 
+  for (int i = 0; i < filteredList.length; i++) {
+    await getPlaceLikes(filteredList[i]);
+  }
+
   return filteredList;
 }
 
@@ -289,6 +312,20 @@ Future<List<Place>> fetchPlaceData() async {
   }
 
   return List.empty();
+}
+
+Future<void> getPlaceLikes(Place place) async {
+  var s1 = LoggedInSingleton();
+  if(s1.loggedIn) {
+    place.likeId =
+    await getLikeStatus(s1.userId, "place", place.placeId.toString());
+
+    if (place.likeId != "") {
+      place.liked = true;
+
+      place.likeCount = await getLikeCount("place", place.placeId.toString());
+    }
+  }
 }
 
 Future<http.Response> sendUserDataToServer(
@@ -514,4 +551,82 @@ Future<Map<String, dynamic>> getUserInfoFB(
   print('Parsed: $collection');
 
   return collection;
+}
+
+Future<String> sendPressedLike(
+    String userId, String object, String objectId) async {
+  final DateTime now = DateTime.now();
+  var url = Uri.parse('http://10.0.2.2:8081/like/press');
+
+  var response = await http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'user_id': userId,
+      'object': object,
+      'object_id': objectId,
+      'date': now.toString(),
+    }),
+  );
+
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  return response.body;
+}
+
+void sendUnpressedLike(String likeId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/like/unpress?likeId=$likeId'); //instead of localhost
+  var response = await http.delete(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+}
+
+Future<String> getLikeStatus(String userId, String object, String objectId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/likes?userId=$userId&object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  if(response.body!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    List<dynamic> stringList = jsonDecode(response.body);
+
+    return (stringList[0][0]).toString();
+  }
+
+  return "";
+}
+
+Future<String> getLikeCount(String object, String objectId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/like/count?&object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  if(response.body!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    return response.body;
+  }
+
+  return "";
+}
+
+Future<http.Response> eventClick(
+    String placeId) {
+  var url = Uri.parse('http://10.0.2.2:8081/event/click');
+
+  return http.put(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'place_id': placeId,
+    }),
+  );
 }

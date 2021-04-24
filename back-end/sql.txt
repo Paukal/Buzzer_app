@@ -8,7 +8,8 @@ CREATE TABLE events (
    start_date TIMESTAMP,
    public BOOLEAN,
    user_added_id NUMERIC,
-   photo_url VARCHAR ( 250 )
+   photo_url VARCHAR ( 250 ),
+   clicks NUMERIC
 );
 
 CREATE TABLE places (
@@ -29,4 +30,12 @@ CREATE TABLE users (
    last_name VARCHAR ( 250 ),
    email VARCHAR ( 250 ),
    verified BOOLEAN
+);
+
+CREATE TABLE likes (
+   like_id serial PRIMARY KEY,
+   user_id NUMERIC,
+   object VARCHAR ( 250 ),
+   object_id NUMERIC,
+   date TIMESTAMP
 );

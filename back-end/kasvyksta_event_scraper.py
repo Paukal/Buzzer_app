@@ -49,6 +49,7 @@ class KasVykstaEventScraper(Thread):
                 public = "true";
                 user_added_id = "-1";
                 photo_url = row.find("img", itemprop="image")["src"]
+                clicks = 0
 
                 '''print(eventName)
                 print(placeName)
@@ -58,13 +59,13 @@ class KasVykstaEventScraper(Thread):
                 print(startDate)
                 print("")'''
 
-                lst.append((eventName, placeName, link, address, city, startDate, public, user_added_id, photo_url))
+                lst.append((eventName, placeName, link, address, city, startDate, public, user_added_id, photo_url, clicks))
 
-                sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id, photo_url) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
+                sql = "INSERT INTO events(event_name, place_name, link, address, city, start_date, public, user_added_id, photo_url, clicks) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING event_id;"
 
                 try:
-                    cur.execute(sql, (eventName, placeName, link, address, city, startDate, public, user_added_id, photo_url))
+                    cur.execute(sql, (eventName, placeName, link, address, city, startDate, public, user_added_id, photo_url, clicks))
                     id = cur.fetchone()[0]
 
                     print("Created event. id from db: ", id)

@@ -46,13 +46,12 @@ class DB {
       },
       onUpgrade: (db, oldVersion, newVersion) {
       return db.execute(
-                "CREATE TABLE places(place_id INTEGER PRIMARY KEY, place_name TEXT, "
-                "place_type TEXT, link TEXT, address TEXT, city TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT);",
+                "DROP TABLE events;",
       );
     },
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      version: 7,
+      version: 8,
     );
 
     return initial;
@@ -100,7 +99,8 @@ class DB {
         maps[i]['start_date'],
         maps[i]['public'] == "true",
         maps[i]['user_added_id'].toString(),
-        maps[i]['photo_url']
+        maps[i]['photo_url'],
+        maps[i]['clicks'],
       );
     });
   }
@@ -213,5 +213,13 @@ class DB {
     Map<String, dynamic> a = maps[0];
 
     return maps[0];
+  }
+
+  Future<void> deleteUser() async {
+    final db = await init();
+
+    await db.delete(
+      'users',
+    );
   }
 }

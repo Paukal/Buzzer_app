@@ -57,6 +57,7 @@ class _MenuState extends State<Menu> {
           final fb = widget.fb;
           // Log out
           final res = await fb.logOut();
+          localDB.deleteUser();
 
           _logInButtonChange();
         },
@@ -72,7 +73,6 @@ class _MenuState extends State<Menu> {
         final res = await fb.logIn(permissions: [
           FacebookPermission.publicProfile,
           FacebookPermission.email,
-          FacebookPermission.readInsights,
         ]);
 
         // Check result status
