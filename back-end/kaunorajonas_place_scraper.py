@@ -87,6 +87,8 @@ class KaunorajonasPlaceScraper(Thread):
 
                 photo_url = ""
 
+                clicks = 0
+
                 try:
                     photo_url = photoDiv.find("div").find("div")['data-bg']
                 except TypeError:
@@ -99,13 +101,13 @@ class KaunorajonasPlaceScraper(Thread):
                 print(city)
                 print("")'''
 
-                lst.append((placeName, placeType, link, address, city, public, user_added_id, photo_url))
+                lst.append((placeName, placeType, link, address, city, public, user_added_id, photo_url, clicks))
 
-                sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
+                sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url, clicks) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
 
                 try:
-                    cur.execute(sql, (placeName, placeType, link, address, city, public, user_added_id, photo_url))
+                    cur.execute(sql, (placeName, placeType, link, address, city, public, user_added_id, photo_url, clicks))
                     id = cur.fetchone()[0]
 
                     print("Created place. id from db: ", id)

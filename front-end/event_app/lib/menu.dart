@@ -11,6 +11,7 @@ import 'accVerification.dart';
 import 'createPlaceEvent.dart';
 import 'myPlacesEvents.dart';
 import 'localDatabase.dart';
+import 'placeEventListLikes.dart';
 
 class Menu extends StatefulWidget {
   final fb = FacebookLogin();
@@ -148,6 +149,12 @@ class _MenuState extends State<Menu> {
         children: [
           Text("Hello, $name!"),
           OutlinedButton(
+            child: Text('My likes'),
+            onPressed: () {
+              _navigateAndDisplaySelection4(context);
+            },
+          ),
+          OutlinedButton(
             child: Text('My places/events'),
             onPressed: () {
               _navigateAndDisplaySelection3(context);
@@ -199,6 +206,18 @@ class _MenuState extends State<Menu> {
       context,
       MaterialPageRoute(
           builder: (context) => MyPlacesEvents()),
+    );
+
+    setState(() {});
+  }
+
+  void _navigateAndDisplaySelection4(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => PlaceEventListLikes()),
     );
 
     setState(() {});

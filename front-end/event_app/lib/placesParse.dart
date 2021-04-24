@@ -26,11 +26,12 @@ class Place {
   bool liked = false;
   String likeId = "";
   String likeCount = "0";
+  String clicks = "0";
 
-  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID, this.photoUrl);
+  Place(this.placeId, this.placeName, this.placeType, this.link, this.address, this.city, this.public, this.userAddedID, this.photoUrl, this.clicks);
 
   factory Place.fromJson(List<dynamic> json) =>
-      Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8]);
+      Place(json[0], json[1], json[2], json[3], json[4], json[5], json[6], json[7], json[8], json[9]);
 
   Map<String, dynamic> toMap() {
     return {
@@ -43,6 +44,7 @@ class Place {
       'public': public,
       'user_added_id': userAddedID,
       'photo_url' : photoUrl,
+      'clicks' : clicks,
     };
   }
 }

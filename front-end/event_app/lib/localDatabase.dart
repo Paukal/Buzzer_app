@@ -40,18 +40,21 @@ class DB {
         return db.execute(
           "CREATE TABLE events(event_id INTEGER PRIMARY KEY, event_name TEXT, "
           "place_name TEXT, link TEXT, address TEXT, city TEXT, start_date "
-          "TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT);"
-          "CREATE TABLE users(user_id TEXT PRIMARY KEY, access_token TEXT);",
+          "TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT, clicks INTEGER);"
+          "CREATE TABLE users(user_id TEXT PRIMARY KEY, access_token TEXT);"
+          "CREATE TABLE places(place_id INTEGER PRIMARY KEY, place_name TEXT, "
+              "place_type TEXT, link TEXT, address TEXT, city TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT, clicks INTEGER);",
         );
       },
       onUpgrade: (db, oldVersion, newVersion) {
       return db.execute(
-                "DROP TABLE events;",
+        "CREATE TABLE places(place_id INTEGER PRIMARY KEY, place_name TEXT, "
+            "place_type TEXT, link TEXT, address TEXT, city TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT, clicks INTEGER);",
       );
     },
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      version: 8,
+      version: 11,
     );
 
     return initial;
@@ -100,7 +103,7 @@ class DB {
         maps[i]['public'] == "true",
         maps[i]['user_added_id'].toString(),
         maps[i]['photo_url'],
-        maps[i]['clicks'],
+        maps[i]['clicks'].toString(),
       );
     });
   }
@@ -167,7 +170,8 @@ class DB {
           maps[i]['city'],
           maps[i]['public'] == "true",
           maps[i]['user_added_id'].toString(),
-          maps[i]['photo_url']
+          maps[i]['photo_url'],
+          maps[i]['clicks'].toString(),
       );
     });
   }

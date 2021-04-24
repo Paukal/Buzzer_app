@@ -21,7 +21,8 @@ CREATE TABLE places (
    city VARCHAR ( 150 ),
    public BOOLEAN,
    user_added_id NUMERIC,
-   photo_url VARCHAR ( 250 )
+   photo_url VARCHAR ( 250 ),
+   clicks NUMERIC
 );
 
 CREATE TABLE users (

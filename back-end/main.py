@@ -13,6 +13,7 @@ from db_connect import connect
 from threading import Thread
 import json
 import datetime
+from datetime import date
 import decimal
 import psycopg2
 from urllib.parse import urlparse, parse_qs
@@ -136,7 +137,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/user/likes" in self.path:
+        if "/user/like" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             userId = ' '.join([str(elem) for elem in query_components["userId"]])
             object = ' '.join([str(elem) for elem in query_components["object"]])
@@ -247,8 +248,6 @@ class MyServer(BaseHTTPRequestHandler):
 
             sql = "SELECT COUNT(*) FROM public.likes WHERE object = %s and object_id = %s"
 
-            exists = ""
-
             try:
                 cur.execute(sql, (object, objectId))
                 num = cur.fetchone()[0]
@@ -263,6 +262,121 @@ class MyServer(BaseHTTPRequestHandler):
             #print("DB returned json: ", json_string.decode())
 
             self.wfile.write(bytes(str(num).encode('utf-8')))
+            self.wfile.flush()
+
+        if "/click/count" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = ""
+            num = 0
+
+            if object == "event":
+                sql = "SELECT clicks FROM public.events WHERE event_id = {0};".format(objectId)
+            if object == "place":
+                sql = "SELECT clicks FROM public.places WHERE place_id = {0};".format(objectId)
+
+            try:
+                cur.execute(sql)
+                num = cur.fetchone()[0]
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+            except UnboundLocalError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(bytes(str(num).encode('utf-8')))
+            self.wfile.flush()
+
+        if "/like/chart" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            today = date.today()
+
+            beforeSevenDays = (today - datetime.timedelta(7)).strftime("%Y-%m-%d")
+            beforeSixDays = (today - datetime.timedelta(6)).strftime("%Y-%m-%d")
+            beforeFiveDays = (today - datetime.timedelta(5)).strftime("%Y-%m-%d")
+            beforeFourDays = (today - datetime.timedelta(4)).strftime("%Y-%m-%d")
+            beforeThreeDays = (today - datetime.timedelta(3)).strftime("%Y-%m-%d")
+            beforeTwoDays = (today - datetime.timedelta(2)).strftime("%Y-%m-%d")
+            beforeOneDays = (today - datetime.timedelta(1)).strftime("%Y-%m-%d")
+            tomorrow = (today + datetime.timedelta(1)).strftime("%Y-%m-%d")
+
+            sql = ""
+            list = []
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeSevenDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeSixDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeFiveDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeFourDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeThreeDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeTwoDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date = '{2}';".format(object, objectId, str(beforeOneDays))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+
+            sql = "SELECT COUNT(*) FROM public.likes WHERE object = '{0}' and object_id = {1} and date < '{2}';".format(object, objectId, str(tomorrow))
+            cur.execute(sql)
+            num = cur.fetchone()[0]
+            list.append(num)
+            print(list)
+
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(json_string)
             self.wfile.flush()
 
     def do_POST(self):
@@ -527,10 +641,11 @@ class MyServer(BaseHTTPRequestHandler):
             eventId = values["event_id"]
 
             sql = "UPDATE events SET clicks = clicks + 1 \
-            WHERE event_id = %s RETURNING event_id;"
+            WHERE event_id = {0} RETURNING event_id;".format(eventId)
+
 
             try:
-                cur.execute(sql, eventId)
+                cur.execute(sql)
                 id = cur.fetchone()[0]
 
                 print("")
@@ -542,6 +657,42 @@ class MyServer(BaseHTTPRequestHandler):
                 print("One of the user values too long for DB")
             except psycopg2.errors.NumericValueOutOfRange:
                 print("ID of the user is too long for DB")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
+            self.wfile.flush()
+
+        if self.path == "/place/click":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                    str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+            values = json.loads(post_data.decode('utf-8'))
+
+            placeId = values["place_id"]
+
+            sql = "UPDATE places SET clicks = clicks + 1 \
+            WHERE place_id = {0} RETURNING place_id;".format(placeId)
+
+
+            try:
+                cur.execute(sql)
+                id = cur.fetchone()[0]
+
+                print("")
+                print("Updated place by user. id from db: ", id)
+                print("")
+            except psycopg2.errors.UniqueViolation:
+                print("Place already exists in the DB")
+            except psycopg2.errors.StringDataRightTruncation:
+                print("One of the place values too long for DB")
+            except psycopg2.errors.NumericValueOutOfRange:
+                print("ID of the place is too long for DB")
 
             conn.commit()
 

@@ -27,7 +27,7 @@ class Event {
   bool liked = false;
   String likeId = "";
   String likeCount = "0";
-  final String clicks;
+  String clicks = "0";
 
   Event(this.eventId, this.eventName, this.placeName, this.link, this.address, this.city, this.startDate, this.public, this.userAddedID, this.photoUrl, this.clicks);
 

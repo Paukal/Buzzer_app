@@ -79,14 +79,35 @@ Future<List<Event>> fetchEventList(
     while (it.moveNext()) {
       final date = DateTime.parse(it.current.startDate);
       if (date.difference(now).inDays == 0 &&
-          date.day == now.day &&
-          DateTime.parse(it.current.startDate).isAfter(now)) {
+          date.day == now.day) {
         filteredList.add(it.current);
       }
     }
   }
   for (int i = 0; i < filteredList.length; i++) {
-    await getEventLikes(filteredList[i]);
+    await getEventLikesClicks(filteredList[i]);
+  }
+
+  return filteredList;
+}
+
+Future<List<Event>> fetchEventListLiked() async {
+  var localDB = DB();
+
+  List<Event> list;
+  if (!localDB.eventsStored) {
+    List<Event> tempList;
+    tempList = await fetchEventData();
+    await localDB.insertEvents(tempList);
+  }
+  list = await localDB.events();
+  List<Event> filteredList = new List.empty(growable: true);
+
+  for (int i = 0; i < list.length; i++) {
+    await getEventLikesClicks(list[i]);
+    if(list[i].liked == true){
+      filteredList.add(list[i]);
+    }
   }
 
   return filteredList;
@@ -113,7 +134,7 @@ Future<List<Event>> fetchEventData() async {
   return List.empty();
 }
 
-Future<void> getEventLikes(Event event) async {
+Future<void> getEventLikesClicks(Event event) async {
   var s1 = LoggedInSingleton();
   if(s1.loggedIn) {
     event.likeId =
@@ -125,6 +146,7 @@ Future<void> getEventLikes(Event event) async {
       event.likeCount = await getLikeCount("event", event.eventId.toString());
     }
   }
+  event.clicks = await getClickCount("event", event.eventId.toString());
 }
 
 Future<List<Place>> fetchPlaceList(
@@ -287,7 +309,29 @@ Future<List<Place>> fetchPlaceList(
   }
 
   for (int i = 0; i < filteredList.length; i++) {
-    await getPlaceLikes(filteredList[i]);
+    await getPlaceLikesClicks(filteredList[i]);
+  }
+
+  return filteredList;
+}
+
+Future<List<Place>> fetchPlaceListLiked() async {
+  var localDB = DB();
+
+  List<Place> list;
+  if (!localDB.placesStored) {
+    List<Place> tempList;
+    tempList = await fetchPlaceData();
+    await localDB.insertPlaces(tempList);
+  }
+  list = await localDB.places();
+  List<Place> filteredList = new List.empty(growable: true);
+
+  for (int i = 0; i < list.length; i++) {
+    await getPlaceLikesClicks(list[i]);
+    if(list[i].liked == true){
+      filteredList.add(list[i]);
+    }
   }
 
   return filteredList;
@@ -314,7 +358,7 @@ Future<List<Place>> fetchPlaceData() async {
   return List.empty();
 }
 
-Future<void> getPlaceLikes(Place place) async {
+Future<void> getPlaceLikesClicks(Place place) async {
   var s1 = LoggedInSingleton();
   if(s1.loggedIn) {
     place.likeId =
@@ -326,6 +370,7 @@ Future<void> getPlaceLikes(Place place) async {
       place.likeCount = await getLikeCount("place", place.placeId.toString());
     }
   }
+  place.clicks = await getClickCount("place", place.placeId.toString());
 }
 
 Future<http.Response> sendUserDataToServer(
@@ -587,7 +632,7 @@ void sendUnpressedLike(String likeId) async {
 
 Future<String> getLikeStatus(String userId, String object, String objectId) async {
   var url = Uri.parse(
-      'http://10.0.2.2:8081/user/likes?userId=$userId&object=$object&objectId=$objectId'); //instead of localhost
+      'http://10.0.2.2:8081/user/like?userId=$userId&object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
   if(response.body!="[]"){
@@ -617,8 +662,23 @@ Future<String> getLikeCount(String object, String objectId) async {
 }
 
 Future<http.Response> eventClick(
-    String placeId) {
+    String eventId) {
   var url = Uri.parse('http://10.0.2.2:8081/event/click');
+
+  return http.put(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'event_id': eventId,
+    }),
+  );
+}
+
+Future<http.Response> placeClick(
+    String placeId) {
+  var url = Uri.parse('http://10.0.2.2:8081/place/click');
 
   return http.put(
     url,
@@ -629,4 +689,36 @@ Future<http.Response> eventClick(
       'place_id': placeId,
     }),
   );
+}
+
+Future<String> getClickCount(String object, String objectId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/click/count?&object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  if(response.body!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    return response.body;
+  }
+
+  return "";
+}
+
+Future<List<dynamic>> getLikeChart(String object, String objectId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/like/chart?&object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  if(response.body!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    List<dynamic> stringList = jsonDecode(response.body);
+
+    return stringList;
+  }
+
+  return List.empty();
 }

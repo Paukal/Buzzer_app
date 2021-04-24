@@ -14,12 +14,12 @@ import 'eventView.dart';
 import 'placeView.dart';
 import 'menu.dart';
 
-class EventList extends StatefulWidget {
+class PlaceEventList extends StatefulWidget {
   @override
-  _EventListState createState() => _EventListState();
+  _PlaceEventListState createState() => _PlaceEventListState();
 }
 
-class _EventListState extends State<EventList> {
+class _PlaceEventListState extends State<PlaceEventList> {
   var s1 = LoggedInSingleton();
 
   late Future<List<Event>> eventList;
@@ -59,8 +59,6 @@ class _EventListState extends State<EventList> {
     placeList = assignPlaceList();
   }
 
-  bool justLiked = false;
-
   @override
   Widget build(BuildContext context) {
     List<Event> events;
@@ -75,70 +73,108 @@ class _EventListState extends State<EventList> {
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
                 if (snapshot.hasData) {
                   events = snapshot.data!;
+                  if(events.isNotEmpty) {
+                    return ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final event = events[index];
 
-
-                  return ListView.builder(
-                      itemCount: events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final event = events[index];
-
-                        return InkWell(
-                          child: Column(
-                            children: <Widget>[
-                              Image.network(event.photoUrl),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Center(child: Text(event.eventName)),
-                              ),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Row(
-                                  children: [
-                                    s1.loggedIn ? IconButton(
-                                      icon: event.liked ? const Icon(Icons.whatshot_outlined) : const Icon(Icons.whatshot_rounded),
-                                      tooltip: 'Like',
-                                      onPressed: () {
-                                        setState(() {
-                                          event.liked = !event.liked;
-
-                                          if(event.liked == true){
-                                            pressedLikeEvent(event);
-                                            justLiked = true;
-                                          }
-                                          else {
-                                            unpressedLikeEvent(event);
-                                            justLiked = false;
-                                          }
-                                        });
-                                      },
-                                    ) : Container(),
-                                    Text(" Comment "),
-                                    Text(" Share"),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  alignment: Alignment.topLeft,
+                          return InkWell(
+                            child: Column(
+                              children: <Widget>[
+                                Image.network(event.photoUrl),
+                                Container(
                                   height: 50,
                                   color: Colors.amber[200],
-                                  child: Column(
+                                  child: Center(child: Text(event.eventName)),
+                                ),
+                                Container(
+                                  height: 50,
+                                  color: Colors.amber[200],
+                                  child: Row(
                                     children: [
-                                      event.liked && justLiked ? Text("Likes: ${(int.parse(event.likeCount) + 1).toString()}", textAlign: TextAlign.right) : Text("Likes: ${event.likeCount}", textAlign: TextAlign.right),
-                                      Text("Seen: ${event.clicks}", textAlign: TextAlign.right),
-                                      Text("Created by:", textAlign: TextAlign.left)
+                                      s1.loggedIn
+                                          ? IconButton(
+                                        icon: event.liked
+                                            ? const Icon(
+                                            Icons.whatshot_outlined)
+                                            : const Icon(
+                                            Icons.whatshot_rounded),
+                                        tooltip: 'Like',
+                                        onPressed: () {
+                                          setState(() {
+                                            event.liked = !event.liked;
+
+                                            if (event.liked == true) {
+                                              pressedLikeEvent(event);
+                                              eventList = assignEventList();
+                                            } else {
+                                              unpressedLikeEvent(event);
+                                              eventList = assignEventList();
+                                            }
+                                          });
+                                        },
+                                      )
+                                          : Container(),
+                                      s1.loggedIn
+                                          ? IconButton(
+                                        icon: const Icon(
+                                            Icons.add_comment_outlined),
+                                        tooltip: 'Like',
+                                        onPressed: () {
+                                          setState(() {
+                                            event.liked = !event.liked;
+
+                                            if (event.liked == true) {
+                                              pressedLikeEvent(event);
+                                              eventList = assignEventList();
+                                            } else {
+                                              unpressedLikeEvent(event);
+                                              eventList = assignEventList();
+                                            }
+                                          });
+                                        },
+                                      )
+                                          : Container(),
+                                      Text(" Share"),
                                     ],
-                                  ))
-                            ],
-                          ),
-                          onTap: () {
-                            _navigateAndDisplaySelection2(
-                                context, event.eventId);
-                            eventClick(event.eventId.toString());
-                          },
-                        );
-                      });
+                                  ),
+                                ),
+                                Container(
+                                    alignment: Alignment.topLeft,
+                                    height: 50,
+                                    color: Colors.amber[200],
+                                    child: Column(
+                                      children: [
+                                        Text("Likes: ${event.likeCount}",
+                                            textAlign: TextAlign.right),
+                                        Text("Seen: ${event.clicks}",
+                                            textAlign: TextAlign.right),
+                                        Text("Created by:",
+                                            textAlign: TextAlign.left)
+                                      ],
+                                    ))
+                              ],
+                            ),
+                            onTap: () {
+                              _navigateAndDisplaySelection2(
+                                  context, event.eventId);
+
+                              setState(() {
+                                eventList = assignEventList();
+                                eventClick(event.eventId.toString());
+                              });
+                            },
+                          );
+                        });
+                  }
+                  else {
+                    return Center(
+                        child: Text(
+                          'No events to show',
+                          textAlign: TextAlign.center,
+                        ));
+                  }
                 } else {
                   return Center(
                       child: Text(
@@ -156,67 +192,89 @@ class _EventListState extends State<EventList> {
                   (BuildContext context, AsyncSnapshot<List<Place>> snapshot2) {
                 if (snapshot2.hasData) {
                   places = snapshot2.data!;
-                  return ListView.builder(
-                      itemCount: places.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final place = places[index];
+                  if(places.isNotEmpty) {
+                    return ListView.builder(
+                        itemCount: places.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final place = places[index];
 
-                        return InkWell(
-                          child: Column(
-                            children: <Widget>[
-                              Image.network(place.photoUrl),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Center(child: Text(place.placeName)),
-                              ),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Row(
-                                  children: [
-                                    s1.loggedIn ? IconButton(
-                                      icon: place.liked ? const Icon(Icons.whatshot_outlined) : const Icon(Icons.whatshot_rounded),
-                                      tooltip: 'Like',
-                                      onPressed: () {
-                                        setState(() {
-                                          place.liked = !place.liked;
-
-                                          if(place.liked == true){
-                                            pressedLikePlace(place);
-                                            justLiked = true;
-                                          }
-                                          else {
-                                            unpressedLikePlace(place);
-                                            justLiked = false;
-                                          }
-                                        });
-                                      },
-                                    ) : Container(),
-                                    Text(" Comment "),
-                                    Text(" Share"),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  alignment: Alignment.topLeft,
+                          return InkWell(
+                            child: Column(
+                              children: <Widget>[
+                                Image.network(place.photoUrl),
+                                Container(
                                   height: 50,
                                   color: Colors.amber[200],
-                                  child: Column(
+                                  child: Center(child: Text(place.placeName)),
+                                ),
+                                Container(
+                                  height: 50,
+                                  color: Colors.amber[200],
+                                  child: Row(
                                     children: [
-                                      place.liked && justLiked ? Text("Likes: ${(int.parse(place.likeCount) + 1).toString()}", textAlign: TextAlign.right) : Text("Likes: ${place.likeCount}", textAlign: TextAlign.right),
-                                      Text("Seen: 2 times", textAlign: TextAlign.right),
-                                      Text("Created by:", textAlign: TextAlign.left)
+                                      s1.loggedIn
+                                          ? IconButton(
+                                        icon: place.liked
+                                            ? const Icon(
+                                            Icons.whatshot_outlined)
+                                            : const Icon(
+                                            Icons.whatshot_rounded),
+                                        tooltip: 'Like',
+                                        onPressed: () {
+                                          setState(() {
+                                            place.liked = !place.liked;
+
+                                            if (place.liked == true) {
+                                              pressedLikePlace(place);
+                                              placeList = assignPlaceList();
+                                            } else {
+                                              unpressedLikePlace(place);
+                                              placeList = assignPlaceList();
+                                            }
+                                          });
+                                        },
+                                      )
+                                          : Container(),
+                                      Text(" Comment "),
+                                      Text(" Share"),
                                     ],
-                                  ))
-                            ],
-                          ),
-                          onTap: () {
-                            _navigateAndDisplaySelection3(
-                                context, place.placeId);
-                          },
-                        );
-                      });
+                                  ),
+                                ),
+                                Container(
+                                    alignment: Alignment.topLeft,
+                                    height: 50,
+                                    color: Colors.amber[200],
+                                    child: Column(
+                                      children: [
+                                        Text("Likes: ${place.likeCount}",
+                                            textAlign: TextAlign.right),
+                                        Text("Seen: ${place.clicks}",
+                                            textAlign: TextAlign.right),
+                                        Text("Created by:",
+                                            textAlign: TextAlign.left)
+                                      ],
+                                    ))
+                              ],
+                            ),
+                            onTap: () {
+                              _navigateAndDisplaySelection3(
+                                  context, place.placeId);
+
+                              setState(() {
+                                placeList = assignPlaceList();
+                                placeClick(place.placeId.toString());
+                              });
+                            },
+                          );
+                        });
+                  }
+                  else {
+                    return Center(
+                        child: Text(
+                          'No places to show',
+                          textAlign: TextAlign.center,
+                        ));
+                  }
                 } else {
                   return Center(
                       child: Text(
@@ -271,8 +329,8 @@ class _EventListState extends State<EventList> {
   }
 
   Future<void> pressedLikeEvent(Event event) async {
-    event.likeId = await sendPressedLike(
-        s1.userId, "event", event.eventId.toString());
+    event.likeId =
+        await sendPressedLike(s1.userId, "event", event.eventId.toString());
   }
 
   void unpressedLikeEvent(Event event) {
@@ -280,8 +338,8 @@ class _EventListState extends State<EventList> {
   }
 
   Future<void> pressedLikePlace(Place place) async {
-    place.likeId = await sendPressedLike(
-        s1.userId, "place", place.placeId.toString());
+    place.likeId =
+        await sendPressedLike(s1.userId, "place", place.placeId.toString());
   }
 
   void unpressedLikePlace(Place place) {
@@ -336,7 +394,6 @@ class _EventListState extends State<EventList> {
         filterDateLastWeek = result[4];
 
         eventList = assignEventList();
-
       });
     }
 
@@ -385,7 +442,6 @@ class _EventListState extends State<EventList> {
         mounds = result[15]; //piliakalniai
 
         placeList = assignPlaceList();
-
       });
     }
   }
