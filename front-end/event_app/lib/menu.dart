@@ -59,6 +59,12 @@ class _MenuState extends State<Menu> {
           // Log out
           final res = await fb.logOut();
           localDB.deleteUser();
+          localDB.deleteAllEvents();
+          localDB.deleteAllPlaces();
+          s1.deleteData();
+
+          localDB.eventsStored = false;
+          localDB.placesStored = false;
 
           _logInButtonChange();
         },
@@ -66,7 +72,7 @@ class _MenuState extends State<Menu> {
     }
 
     return OutlinedButton(
-      child: Text('Log In'),
+      child: Text('Log in with Facebook'),
       onPressed: () async {
         final fb = widget.fb;
 
@@ -94,16 +100,28 @@ class _MenuState extends State<Menu> {
             // But user can decline permission
             if (email != null) print('And your email is $email');
 
-            final resp = await sendUserDataToServer(profile.firstName!, profile.lastName!, email!, profile.userId);
+            s1.userId = profile.userId;
+
+            if(profile.firstName != null) {
+              s1.firstName = profile.firstName!;
+            }
+            if(profile.lastName != null) {
+              s1.lastName = profile.lastName!;
+            }
+            if(email != null) {
+              s1.email = email;
+            }
+
+            final resp = await sendUserDataToServer(s1.firstName, s1.lastName, s1.email, s1.userId);
             print(resp.body);
 
-            s1.userId = profile.userId;
-            s1.firstName = profile.firstName!;
-            s1.lastName = profile.lastName!;
-            s1.email = email;
+            await fetchUserData(s1.userId);
 
             _logInButtonChange();
             localDB.insertUser(profile.userId, accessToken.token);
+
+            localDB.eventsStored = false;
+            localDB.placesStored = false;
 
             break;
           case FacebookLoginStatus.cancel:
@@ -132,6 +150,11 @@ class _MenuState extends State<Menu> {
       s1.lastName = userData.values.elementAt(1).toString();
       s1.email = userData.values.elementAt(2).toString();
       s1.userId = userData.values.elementAt(3).toString();
+
+      await fetchUserData(s1.userId);
+
+      localDB.eventsStored = false;
+      localDB.placesStored = false;
 
       _logInButtonChange();
 
@@ -228,14 +251,24 @@ class LoggedInSingleton {
   static final LoggedInSingleton _singleton = LoggedInSingleton._internal();
   bool loggedIn = false;
 
-  String userId = "";
+  String userId = "-2";
   String firstName = "";
   String lastName = "";
   String email = "";
   bool accVerified = false;
+  bool admin = false;
 
   factory LoggedInSingleton() {
     return _singleton;
+  }
+
+  void deleteData() {
+    userId = "-2";
+    firstName = "";
+    lastName = "";
+    email = "";
+    accVerified = false;
+    admin = false;
   }
 
   LoggedInSingleton._internal();

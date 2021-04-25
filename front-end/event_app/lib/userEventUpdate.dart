@@ -176,7 +176,7 @@ class UserEventUpdateState extends State<UserEventUpdate> {
                 ),
                 SwitchListTile(
                   onChanged: (bool value) {
-                    if (public) {
+                    if (s1.accVerified) {
                       setState(() {
                         public = !public;
                       });

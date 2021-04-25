@@ -27,58 +27,6 @@ cur = conn.cursor()
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
 
-        if self.path == "/events":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json; charset=utf-8")
-            self.end_headers()
-
-            sql = "SELECT * FROM public.events ORDER BY event_id ASC "
-
-            cur.execute(sql)
-            list = cur.fetchall()
-
-            #print("raw list: ", list)
-
-            def json_default(value):
-                if isinstance(value, datetime.datetime):
-                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
-                if isinstance(value, decimal.Decimal):
-                    return str('{0}'.format(value))
-                else:
-                    return value.__dict__
-
-            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
-
-            #print("DB returned json: ", json_string.decode())
-
-            self.wfile.write(json_string)
-            self.wfile.flush()
-
-        if self.path == "/places":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json; charset=utf-8")
-            self.end_headers()
-
-            sql = "SELECT * FROM public.places ORDER BY place_id ASC "
-
-            cur.execute(sql)
-            list = cur.fetchall()
-
-            #print("raw list: ", list)
-
-            def json_default(value):
-                if isinstance(value, decimal.Decimal):
-                    return str('{0}'.format(value))
-                else:
-                    return value.__dict__
-
-            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
-
-            #print("DB returned json: ", json_string.decode())
-
-            self.wfile.write(json_string)
-            self.wfile.flush()
-
         if "/user/events" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             userId = query_components["userId"]
@@ -109,7 +57,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/user/places" in self.path:
+        elif "/user/places" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             userId = query_components["userId"]
 
@@ -137,7 +85,65 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/user/like" in self.path:
+        elif "events" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            userId = int(query_components["userId"][0])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "SELECT * FROM public.events WHERE public = true OR (public = false AND user_added_id = {0}) ORDER BY event_id ASC ".format(userId)
+
+            cur.execute(sql)
+            list = cur.fetchall()
+
+            #print("raw list: ", list)
+
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
+        elif "/places" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            userId = int(query_components["userId"][0])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "SELECT * FROM public.places WHERE public = true OR (public = false AND user_added_id = {0}) ORDER BY place_id ASC ".format(userId)
+
+            cur.execute(sql)
+            list = cur.fetchall()
+
+            #print("raw list: ", list)
+
+            def json_default(value):
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
+        elif "/user/like" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             userId = ' '.join([str(elem) for elem in query_components["userId"]])
             object = ' '.join([str(elem) for elem in query_components["object"]])
@@ -177,7 +183,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/eventview" in self.path:
+        elif "/eventview" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             eventId = query_components["eventId"]
 
@@ -207,7 +213,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/placeview" in self.path:
+        elif "/placeview" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             placeId = query_components["placeId"]
 
@@ -237,7 +243,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/like/count" in self.path:
+        elif "/like/count" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             object = ' '.join([str(elem) for elem in query_components["object"]])
             objectId = int(' '.join([str(elem) for elem in query_components["objectId"]]))
@@ -264,7 +270,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(bytes(str(num).encode('utf-8')))
             self.wfile.flush()
 
-        if "/click/count" in self.path:
+        elif "/click/count" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             object = ' '.join([str(elem) for elem in query_components["object"]])
             objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
@@ -299,7 +305,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(bytes(str(num).encode('utf-8')))
             self.wfile.flush()
 
-        if "/like/chart" in self.path:
+        elif "/like/chart" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             object = ' '.join([str(elem) for elem in query_components["object"]])
             objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
@@ -379,7 +385,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
-        if "/comments" in self.path:
+        elif "/comments" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             object = ' '.join([str(elem) for elem in query_components["object"]])
             objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
@@ -421,10 +427,50 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
+        elif "/user/data" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            userId = ' '.join([str(elem) for elem in query_components["userId"]])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = ""
+            list = []
+
+            sql = "SELECT * FROM public.users WHERE user_id = {0};".format(userId)
+
+            try:
+                cur.execute(sql)
+                user = cur.fetchall()
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+            except UnboundLocalError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(user, default=json_default, ensure_ascii=False).encode('utf8')
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
     def do_POST(self):
 
         if self.path == "/user/connected":
-            print('eina')
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -437,12 +483,13 @@ class MyServer(BaseHTTPRequestHandler):
             lastName = values["last_name"]
             email = values["email"]
             verified = "false"
+            admin = "false"
 
-            sql = "INSERT INTO users(user_id, first_name, last_name, email, verified) \
-            VALUES (%s,%s,%s,%s,%s) RETURNING user_id;"
+            sql = "INSERT INTO users(user_id, first_name, last_name, email, verified, admin) \
+            VALUES (%s,%s,%s,%s,%s,%s) RETURNING user_id;"
 
             try:
-                cur.execute(sql, (userId, firstName, lastName, email, verified))
+                cur.execute(sql, (userId, firstName, lastName, email, verified, admin))
                 id = cur.fetchone()[0]
 
                 print("")
@@ -463,7 +510,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/user/event":
+        elif self.path == "/user/event":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -507,7 +554,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/user/place":
+        elif self.path == "/user/place":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -523,23 +570,24 @@ class MyServer(BaseHTTPRequestHandler):
             public = values["public"]
             userId = values["user_id"]
             photoUrl = values["photo_url"]
+            clicks = 0
 
-            sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
+            sql = "INSERT INTO places(place_name, place_type, link, address, city, public, user_added_id, photo_url, clicks) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING place_id;"
 
             try:
-                cur.execute(sql, (placeName, placeType, link, address, city, public, userId, photoUrl))
+                cur.execute(sql, (placeName, placeType, link, address, city, public, userId, photoUrl, clicks))
                 id = cur.fetchone()[0]
 
                 print("")
                 print("Created new place by user. id from db: ", id)
                 print("")
             except psycopg2.errors.UniqueViolation:
-                print("User already exists in the DB")
+                print("Place already exists in the DB")
             except psycopg2.errors.StringDataRightTruncation:
-                print("One of the user values too long for DB")
+                print("One of the place values too long for DB")
             except psycopg2.errors.NumericValueOutOfRange:
-                print("ID of the user is too long for DB")
+                print("ID of the place is too long for DB")
 
             conn.commit()
 
@@ -549,7 +597,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/like/press":
+        elif self.path == "/like/press":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -587,7 +635,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(bytes(str(id).encode('utf-8')))
             self.wfile.flush()
 
-        if self.path == "/comment/new":
+        elif self.path == "/comment/new":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -671,7 +719,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/user/place/update":
+        elif self.path == "/user/place/update":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -712,7 +760,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/event/click":
+        elif self.path == "/event/click":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -748,7 +796,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
-        if self.path == "/place/click":
+        elif self.path == "/place/click":
             content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
             post_data = self.rfile.read(content_length) # <--- Gets the data itself
             print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
@@ -803,7 +851,7 @@ class MyServer(BaseHTTPRequestHandler):
 
             self.wfile.flush()
 
-        if "/user/place/delete" in self.path:
+        elif "/user/place/delete" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             placeId = query_components["placeId"]
 
@@ -820,7 +868,7 @@ class MyServer(BaseHTTPRequestHandler):
 
             self.wfile.flush()
 
-        if "/like/unpress" in self.path:
+        elif "/like/unpress" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             likeId = query_components["likeId"]
 

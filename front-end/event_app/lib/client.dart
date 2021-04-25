@@ -12,6 +12,8 @@ import 'localDatabase.dart';
 import 'menu.dart';
 import 'commentView.dart';
 
+var s1 = LoggedInSingleton();
+
 Future<List<Event>> fetchEventList(
     bool filterDateToday,
     bool filterDateTomorrow,
@@ -115,7 +117,7 @@ Future<List<Event>> fetchEventListLiked() async {
 }
 
 Future<List<Event>> fetchEventData() async {
-  var url = Uri.parse('http://10.0.2.2:8081/events'); //instead of localhost
+  var url = Uri.parse('http://10.0.2.2:8081/events?userId=${s1.userId}'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -143,10 +145,9 @@ Future<void> getEventLikesClicks(Event event) async {
 
     if (event.likeId != "") {
       event.liked = true;
-
-      event.likeCount = await getLikeCount("event", event.eventId.toString());
     }
   }
+  event.likeCount = await getLikeCount("event", event.eventId.toString());
   event.clicks = await getClickCount("event", event.eventId.toString());
 }
 
@@ -339,7 +340,7 @@ Future<List<Place>> fetchPlaceListLiked() async {
 }
 
 Future<List<Place>> fetchPlaceData() async {
-  var url = Uri.parse('http://10.0.2.2:8081/places'); //instead of localhost
+  var url = Uri.parse('http://10.0.2.2:8081/places?userId=${s1.userId}'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
@@ -367,10 +368,9 @@ Future<void> getPlaceLikesClicks(Place place) async {
 
     if (place.likeId != "") {
       place.liked = true;
-
-      place.likeCount = await getLikeCount("place", place.placeId.toString());
     }
   }
+  place.likeCount = await getLikeCount("place", place.placeId.toString());
   place.clicks = await getClickCount("place", place.placeId.toString());
 }
 
@@ -390,6 +390,23 @@ Future<http.Response> sendUserDataToServer(
       'id': id,
     }),
   );
+}
+
+Future<void> fetchUserData(String userId) async {
+  var url = Uri.parse('http://10.0.2.2:8081/user/data?userId=$userId'); //instead of localhost
+  var response = await http.get(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  try {
+    if (response.body.isNotEmpty) {
+      List<dynamic> stringList = jsonDecode(response.body);
+      s1.accVerified = stringList[0][4];
+      s1.admin = stringList[0][5];
+    }
+  } catch (err) {
+    print("Exception: $err");
+  }
 }
 
 Future<http.Response> sendNewEventDataToServer(

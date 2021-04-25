@@ -30,7 +30,8 @@ CREATE TABLE users (
    first_name VARCHAR ( 250 ),
    last_name VARCHAR ( 250 ),
    email VARCHAR ( 250 ),
-   verified BOOLEAN
+   verified BOOLEAN,
+   admin BOOLEAN
 );
 
 CREATE TABLE likes (

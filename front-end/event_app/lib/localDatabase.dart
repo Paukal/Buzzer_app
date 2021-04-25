@@ -48,8 +48,7 @@ class DB {
       },
       onUpgrade: (db, oldVersion, newVersion) {
       return db.execute(
-        "CREATE TABLE places(place_id INTEGER PRIMARY KEY, place_name TEXT, "
-            "place_type TEXT, link TEXT, address TEXT, city TEXT, public TEXT, user_added_id INTEGER, photo_url TEXT, clicks INTEGER);",
+          "CREATE TABLE users(user_id TEXT PRIMARY KEY, access_token TEXT);"
       );
     },
       // Set the version. This executes the onCreate function and provides a
@@ -129,6 +128,14 @@ class DB {
     );
   }
 
+  Future<void> deleteAllEvents() async {
+    final db = await init();
+
+    await db.delete(
+      'events',
+    );
+  }
+
   Future<void> insertPlace(Place place) async {
     final Database db = await init();
 
@@ -194,6 +201,14 @@ class DB {
       'places',
       where: "place_id = ?",
       whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteAllPlaces() async {
+    final db = await init();
+
+    await db.delete(
+      'places',
     );
   }
 

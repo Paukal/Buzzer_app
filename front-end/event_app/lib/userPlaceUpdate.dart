@@ -177,7 +177,7 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
                 ),
                 SwitchListTile(
                   onChanged: (bool value) {
-                    if (public) {
+                    if (s1.accVerified) {
                       setState(() {
                         public = !public;
                       });
@@ -188,12 +188,12 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
                     }
                   },
                   value: public,
-                  title: new Text('Public event',
+                  title: new Text('Public place',
                       style: new TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.red)),
                 ),
                 popUpForVerify
-                    ? Text("Need to verify account to make your event public")
+                    ? Text("Need to verify account to make your place public")
                     : Container(),
                 ElevatedButton(
                   onPressed: () {
