@@ -10,6 +10,7 @@ import 'placesParse.dart';
 import 'dart:convert';
 import 'localDatabase.dart';
 import 'menu.dart';
+import 'commentView.dart';
 
 Future<List<Event>> fetchEventList(
     bool filterDateToday,
@@ -721,4 +722,44 @@ Future<List<dynamic>> getLikeChart(String object, String objectId) async {
   }
 
   return List.empty();
+}
+
+Future<CommentCollection> getComments(String object, String objectId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/comments?&object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+  CommentCollection collection = CommentCollection.fromJson(stringList);
+
+  return collection;
+}
+
+Future<String> sendComment(
+    String userId, String userName,String object, String objectId, String comment) async {
+  final DateTime now = DateTime.now();
+  var url = Uri.parse('http://10.0.2.2:8081/comment/new');
+
+  var response = await http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'user_id': userId,
+      'user_name': userName,
+      'object': object,
+      'object_id': objectId,
+      'date': now.toString(),
+      'comment' : comment
+    }),
+  );
+
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  return response.body;
 }

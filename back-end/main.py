@@ -379,6 +379,48 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
+        if "/comments" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = ' '.join([str(elem) for elem in query_components["objectId"]])
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = ""
+            list = []
+
+            sql = "SELECT * FROM public.comments WHERE object = '{0}' AND object_id = {1};".format(object, objectId)
+
+            try:
+                cur.execute(sql)
+                list = cur.fetchall()
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+            except UnboundLocalError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            def json_default(value):
+                if isinstance(value, datetime.datetime):
+                    return str('{0}-{1:0=2d}-{2:0=2d} {3:0=2d}:{4:0=2d}:00'.format(value.year, value.month, value.day, value.hour, value.minute))
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
     def do_POST(self):
 
         if self.path == "/user/connected":
@@ -536,6 +578,46 @@ class MyServer(BaseHTTPRequestHandler):
                 print("One of the like values too long for DB")
             except psycopg2.errors.NumericValueOutOfRange:
                 print("ID of the like is too long for DB")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(bytes(str(id).encode('utf-8')))
+            self.wfile.flush()
+
+        if self.path == "/comment/new":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                    str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+            values = json.loads(post_data.decode('utf-8'))
+
+            userId = values["user_id"]
+            userName = values["user_name"]
+            object = values["object"]
+            objectId = values["object_id"]
+            date = values["date"]
+            comment = values["comment"]
+
+            sql = "INSERT INTO comments(user_id, user_name, object, object_id, date, comment) \
+            VALUES (%s,%s,%s,%s,%s,%s) RETURNING comment_id;"
+
+            try:
+                cur.execute(sql, (userId, userName, object, objectId, date, comment))
+                id = cur.fetchone()[0]
+
+                print("")
+                print("Created new comment by user. id from db: ", id)
+                print("")
+            except psycopg2.errors.UniqueViolation:
+                print("Comment already exists in the DB")
+            except psycopg2.errors.StringDataRightTruncation:
+                print("One of the comment values too long for DB")
+            except psycopg2.errors.NumericValueOutOfRange:
+                print("ID of the comment is too long for DB")
 
             conn.commit()
 

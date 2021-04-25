@@ -13,6 +13,7 @@ import 'placeFilter.dart';
 import 'eventView.dart';
 import 'placeView.dart';
 import 'menu.dart';
+import 'commentView.dart';
 
 class PlaceEventListLikes extends StatefulWidget {
   @override
@@ -48,90 +49,102 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
                 if (snapshot.hasData) {
                   events = snapshot.data!;
-                  if(events.isNotEmpty){
+                  if (events.isNotEmpty) {
+                    return ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final event = events[index];
 
-                  return ListView.builder(
-                      itemCount: events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final event = events[index];
-
-                        return InkWell(
-                          child: Column(
-                            children: <Widget>[
-                              Image.network(event.photoUrl),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Center(child: Text(event.eventName)),
-                              ),
-                              Container(
-                                height: 50,
-                                color: Colors.amber[200],
-                                child: Row(
-                                  children: [
-                                    s1.loggedIn
-                                        ? IconButton(
-                                      icon: event.liked
-                                          ? const Icon(
-                                          Icons.whatshot_outlined)
-                                          : const Icon(
-                                          Icons.whatshot_rounded),
-                                      tooltip: 'Like',
-                                      onPressed: () {
-                                        setState(() {
-                                          event.liked = !event.liked;
-
-                                          if (event.liked == true) {
-                                            pressedLikeEvent(event);
-                                            eventList = fetchEventListLiked();
-                                          } else {
-                                            unpressedLikeEvent(event);
-                                            eventList = fetchEventListLiked();
-                                          }
-                                        });
-                                      },
-                                    )
-                                        : Container(),
-                                    Text(" Comment "),
-                                    Text(" Share"),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  alignment: Alignment.topLeft,
+                          return InkWell(
+                            child: Column(
+                              children: <Widget>[
+                                Image.network(event.photoUrl),
+                                Container(
                                   height: 50,
                                   color: Colors.amber[200],
-                                  child: Column(
+                                  child: Center(child: Text(event.eventName)),
+                                ),
+                                Container(
+                                  height: 50,
+                                  color: Colors.amber[200],
+                                  child: Row(
                                     children: [
-                                      Text("Likes: ${event.likeCount}",
-                                          textAlign: TextAlign.right),
-                                      Text("Seen: ${event.clicks}",
-                                          textAlign: TextAlign.right),
-                                      Text("Created by:",
-                                          textAlign: TextAlign.left)
-                                    ],
-                                  ))
-                            ],
-                          ),
-                          onTap: () {
-                            _navigateAndDisplaySelection2(
-                                context, event.eventId);
+                                      s1.loggedIn
+                                          ? IconButton(
+                                              icon: event.liked
+                                                  ? const Icon(
+                                                      Icons.whatshot_outlined)
+                                                  : const Icon(
+                                                      Icons.whatshot_rounded),
+                                              tooltip: 'Like',
+                                              onPressed: () {
+                                                setState(() {
+                                                  event.liked = !event.liked;
 
-                            setState(() {
-                              eventList = fetchEventListLiked();
-                              eventClick(event.eventId.toString());
-                            });
-                          },
-                        );
-                      });
-                }
-                else {
-                  return Center(
-                      child: Text(
-                        'No events to show',
-                        textAlign: TextAlign.center,
-                      ));
-                }
+                                                  if (event.liked == true) {
+                                                    pressedLikeEvent(event);
+                                                    eventList =
+                                                        fetchEventListLiked();
+                                                  } else {
+                                                    unpressedLikeEvent(event);
+                                                    eventList =
+                                                        fetchEventListLiked();
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : Container(),
+                                      s1.loggedIn
+                                          ? IconButton(
+                                              icon: const Icon(
+                                                  Icons.add_comment_outlined),
+                                              tooltip: 'Like',
+                                              onPressed: () {
+                                                _navigateAndDisplaySelection4(
+                                                    context,
+                                                    "event",
+                                                    event.eventId);
+                                              },
+                                            )
+                                          : Container(),
+                                      Text(" Share"),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    alignment: Alignment.topLeft,
+                                    height: 50,
+                                    color: Colors.amber[200],
+                                    child: Row(
+                                      children: [
+                                        Text("${event.likeCount} likes    ",
+                                            textAlign: TextAlign.right),
+                                        Text("${event.clicks} taps   ",
+                                            textAlign: TextAlign.right),
+                                        Text("    Created by:   ",
+                                            textAlign: TextAlign.left)
+                                      ],
+                                    ))
+                              ],
+                            ),
+                            onTap: () {
+                              _navigateAndDisplaySelection2(
+                                  context, event.eventId);
+
+                              setState(() {
+                                eventList = fetchEventListLiked();
+                                eventClick(event.eventId.toString());
+                              });
+                            },
+                          );
+                        });
+                  } else {
+                    return Center(
+                        child: Text(
+                      'No events to show',
+                      textAlign: TextAlign.center,
+                    ));
+                  }
                 } else {
                   return Center(
                       child: Text(
@@ -149,7 +162,7 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                   (BuildContext context, AsyncSnapshot<List<Place>> snapshot2) {
                 if (snapshot2.hasData) {
                   places = snapshot2.data!;
-                  if(places.isNotEmpty) {
+                  if (places.isNotEmpty) {
                     return ListView.builder(
                         itemCount: places.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -171,28 +184,42 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                                     children: [
                                       s1.loggedIn
                                           ? IconButton(
-                                        icon: place.liked
-                                            ? const Icon(
-                                            Icons.whatshot_outlined)
-                                            : const Icon(
-                                            Icons.whatshot_rounded),
-                                        tooltip: 'Like',
-                                        onPressed: () {
-                                          setState(() {
-                                            place.liked = !place.liked;
+                                              icon: place.liked
+                                                  ? const Icon(
+                                                      Icons.whatshot_outlined)
+                                                  : const Icon(
+                                                      Icons.whatshot_rounded),
+                                              tooltip: 'Like',
+                                              onPressed: () {
+                                                setState(() {
+                                                  place.liked = !place.liked;
 
-                                            if (place.liked == true) {
-                                              pressedLikePlace(place);
-                                              placeList = fetchPlaceListLiked();
-                                            } else {
-                                              unpressedLikePlace(place);
-                                              placeList = fetchPlaceListLiked();
-                                            }
-                                          });
-                                        },
-                                      )
+                                                  if (place.liked == true) {
+                                                    pressedLikePlace(place);
+                                                    placeList =
+                                                        fetchPlaceListLiked();
+                                                  } else {
+                                                    unpressedLikePlace(place);
+                                                    placeList =
+                                                        fetchPlaceListLiked();
+                                                  }
+                                                });
+                                              },
+                                            )
                                           : Container(),
-                                      Text(" Comment "),
+                                      s1.loggedIn
+                                          ? IconButton(
+                                              icon: const Icon(
+                                                  Icons.add_comment_outlined),
+                                              tooltip: 'Like',
+                                              onPressed: () {
+                                                _navigateAndDisplaySelection4(
+                                                    context,
+                                                    "place",
+                                                    place.placeId);
+                                              },
+                                            )
+                                          : Container(),
                                       Text(" Share"),
                                     ],
                                   ),
@@ -201,13 +228,13 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                                     alignment: Alignment.topLeft,
                                     height: 50,
                                     color: Colors.amber[200],
-                                    child: Column(
+                                    child: Row(
                                       children: [
-                                        Text("Likes: ${place.likeCount}",
+                                        Text("${place.likeCount} likes    ",
                                             textAlign: TextAlign.right),
-                                        Text("Seen: ${place.clicks}",
+                                        Text("${place.clicks} taps   ",
                                             textAlign: TextAlign.right),
-                                        Text("Created by:",
+                                        Text("    Created by:   ",
                                             textAlign: TextAlign.left)
                                       ],
                                     ))
@@ -224,13 +251,12 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                             },
                           );
                         });
-                  }
-                  else {
+                  } else {
                     return Center(
                         child: Text(
-                          'No places to show',
-                          textAlign: TextAlign.center,
-                        ));
+                      'No places to show',
+                      textAlign: TextAlign.center,
+                    ));
                   }
                 } else {
                   return Center(
@@ -291,6 +317,18 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
     sendUnpressedLike(place.likeId);
   }
 
+  void _navigateAndDisplaySelection4(
+      BuildContext context, String object, int objectId) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CommentView(object, objectId)),
+    );
+
+    setState(() {});
+  }
+
   void _navigateAndDisplaySelection2(BuildContext context, int eventId) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
@@ -312,5 +350,4 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
 
     setState(() {});
   }
-
 }

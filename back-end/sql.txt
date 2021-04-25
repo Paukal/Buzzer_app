@@ -40,3 +40,13 @@ CREATE TABLE likes (
    object_id NUMERIC,
    date TIMESTAMP
 );
+
+CREATE TABLE comments (
+   comment_id serial PRIMARY KEY,
+   user_id NUMERIC,
+   user_name VARCHAR ( 250 ),
+   object VARCHAR ( 250 ),
+   object_id NUMERIC,
+   date TIMESTAMP,
+   comment VARCHAR ( 1000 )
+);

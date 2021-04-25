@@ -64,7 +64,8 @@ class AccVerificationState extends State<AccVerification> {
   }
 
   _imgFromCamera() async {
-    File image = (await ImagePicker.platform.pickImage(
+    ImagePicker picker = new ImagePicker();
+    File image = (await picker.getImage(
         source: ImageSource.camera, imageQuality: 50
     )) as File;
 
@@ -75,12 +76,15 @@ class AccVerificationState extends State<AccVerification> {
   }
 
   _imgFromGallery() async {
-    File image = (await  ImagePicker.platform.pickImage(
+    ImagePicker picker = new ImagePicker();
+    PickedFile? image = (await picker.getImage(
         source: ImageSource.gallery, imageQuality: 50
-    )) as File;
+    ));
+
+
 
     setState(() {
-      _image = image;
+      _image = File(image!.path);
       picked = true;
     });
   }

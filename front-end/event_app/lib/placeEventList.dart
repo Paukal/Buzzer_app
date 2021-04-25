@@ -13,6 +13,7 @@ import 'placeFilter.dart';
 import 'eventView.dart';
 import 'placeView.dart';
 import 'menu.dart';
+import 'commentView.dart';
 
 class PlaceEventList extends StatefulWidget {
   @override
@@ -121,19 +122,9 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                         icon: const Icon(
                                             Icons.add_comment_outlined),
                                         tooltip: 'Like',
-                                        onPressed: () {
-                                          setState(() {
-                                            event.liked = !event.liked;
-
-                                            if (event.liked == true) {
-                                              pressedLikeEvent(event);
-                                              eventList = assignEventList();
-                                            } else {
-                                              unpressedLikeEvent(event);
-                                              eventList = assignEventList();
-                                            }
-                                          });
-                                        },
+                                          onPressed: () {
+                                            _navigateAndDisplaySelection4(context, "event", event.eventId);
+                                          },
                                       )
                                           : Container(),
                                       Text(" Share"),
@@ -144,13 +135,13 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                     alignment: Alignment.topLeft,
                                     height: 50,
                                     color: Colors.amber[200],
-                                    child: Column(
+                                    child: Row(
                                       children: [
-                                        Text("Likes: ${event.likeCount}",
+                                        Text("${event.likeCount} likes    ",
                                             textAlign: TextAlign.right),
-                                        Text("Seen: ${event.clicks}",
+                                        Text("${event.clicks} taps   ",
                                             textAlign: TextAlign.right),
-                                        Text("Created by:",
+                                        Text("    Created by:   ",
                                             textAlign: TextAlign.left)
                                       ],
                                     ))
@@ -235,7 +226,16 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                         },
                                       )
                                           : Container(),
-                                      Text(" Comment "),
+                                      s1.loggedIn
+                                          ? IconButton(
+                                        icon: const Icon(
+                                            Icons.add_comment_outlined),
+                                        tooltip: 'Like',
+                                        onPressed: () {
+                                          _navigateAndDisplaySelection4(context, "place", place.placeId);
+                                        },
+                                      )
+                                          : Container(),
                                       Text(" Share"),
                                     ],
                                   ),
@@ -244,13 +244,13 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                     alignment: Alignment.topLeft,
                                     height: 50,
                                     color: Colors.amber[200],
-                                    child: Column(
+                                    child: Row(
                                       children: [
-                                        Text("Likes: ${place.likeCount}",
+                                        Text("${place.likeCount} likes    ",
                                             textAlign: TextAlign.right),
-                                        Text("Seen: ${place.clicks}",
+                                        Text("${place.clicks} taps   ",
                                             textAlign: TextAlign.right),
-                                        Text("Created by:",
+                                        Text("    Created by:   ",
                                             textAlign: TextAlign.left)
                                       ],
                                     ))
@@ -344,6 +344,17 @@ class _PlaceEventListState extends State<PlaceEventList> {
 
   void unpressedLikePlace(Place place) {
     sendUnpressedLike(place.likeId);
+  }
+
+  void _navigateAndDisplaySelection4(BuildContext context, String object, int objectId) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CommentView(object, objectId)),
+    );
+
+    setState(() {});
   }
 
   void _navigateAndDisplaySelection2(BuildContext context, int eventId) async {
