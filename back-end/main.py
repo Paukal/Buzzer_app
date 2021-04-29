@@ -21,6 +21,7 @@ from requests_toolbelt.multipart import decoder
 from PIL import Image
 import io
 import cgi
+import base64
 
 hostName = "localhost"
 serverPort = 8081
@@ -472,6 +473,44 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(json_string)
             self.wfile.flush()
 
+        elif "/list/verification" in self.path:
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = ""
+            list = []
+
+            sql = "SELECT * FROM public.verification_photos;"
+
+            try:
+                cur.execute(sql)
+                list = cur.fetchall()
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+            except UnboundLocalError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+            def json_default(value):
+                if isinstance(value, decimal.Decimal):
+                    return str('{0}'.format(value))
+                elif isinstance(value, memoryview):
+                    encoded = base64.b64encode(value.tobytes())
+                    return encoded.decode('ascii')
+                else:
+                    return value.__dict__
+
+            json_string = json.dumps(list, default=json_default, ensure_ascii=False).encode('utf8')
+
+            self.wfile.write(json_string)
+            self.wfile.flush()
+
     def do_POST(self):
 
         if self.path == "/user/connected":
@@ -699,6 +738,8 @@ class MyServer(BaseHTTPRequestHandler):
             sql = "INSERT INTO verification_photos(user_id, photo_bytes) \
             VALUES (%s,%s) RETURNING photo_id;"
 
+            id = ""
+
             try:
                 cur.execute(sql, (userId, photoBytes))
                 id = cur.fetchone()[0]
@@ -718,7 +759,10 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
-            self.wfile.write(bytes(str(id).encode('utf-8')))
+            if id == "":
+                self.wfile.write(bytes(str("already sent").encode('utf-8')))
+            else:
+                self.wfile.write(bytes(str(id).encode('utf-8')))
             self.wfile.flush()
 
     def do_PUT(self):
@@ -762,7 +806,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
-            self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+            self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
         elif self.path == "/user/place/update":
@@ -876,6 +920,34 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/json; charset=utf-8")
             self.end_headers()
             self.wfile.write("PUT request for {}".format(self.path).encode('utf-8'))
+            self.wfile.flush()
+
+        if self.path == "/admin/verify/user":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("PUT request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                    str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+            values = json.loads(post_data.decode('utf-8'))
+
+            userId = values["user_id"]
+
+            sql = "UPDATE users SET verified = true \
+            WHERE user_id = {0} RETURNING user_id;".format(userId)
+
+            cur.execute(sql, (userId))
+            id = cur.fetchone()[0]
+
+            print("")
+            print("User verified. id from db: ", id)
+            print("")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write("UT request for {}".format(self.path).encode('utf-8'))
             self.wfile.flush()
 
     def do_DELETE(self):

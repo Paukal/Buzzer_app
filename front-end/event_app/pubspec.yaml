@@ -30,10 +30,11 @@ dependencies:
   geocoding: ^2.0.0
   address_search_field: ^3.0.10
   sqflite: ^2.0.0+3
-  path_provider: ^0.4.1
+  path_provider: ^2.0.1
   image_picker: ^0.7.4
   syncfusion_flutter_charts: ^19.1.57+1
   url_launcher: ^6.0.3
+  social_share: ^2.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

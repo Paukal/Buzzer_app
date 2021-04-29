@@ -4,6 +4,8 @@
 * User menu logic
 * */
 
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'client.dart';
@@ -12,6 +14,7 @@ import 'createPlaceEvent.dart';
 import 'myPlacesEvents.dart';
 import 'localDatabase.dart';
 import 'placeEventListLikes.dart';
+import 'verifyUsersList.dart';
 
 class Menu extends StatefulWidget {
   final fb = FacebookLogin();
@@ -148,8 +151,14 @@ class _MenuState extends State<Menu> {
 
       s1.firstName = userData.values.elementAt(0).toString();
       s1.lastName = userData.values.elementAt(1).toString();
-      s1.email = userData.values.elementAt(2).toString();
-      s1.userId = userData.values.elementAt(3).toString();
+
+      if(userData.length==4) {
+        s1.email = userData.values.elementAt(2).toString();
+        s1.userId = userData.values.elementAt(3).toString();
+      }
+      else if (userData.length==3) {
+        s1.userId = userData.values.elementAt(2).toString();
+      }
 
       await fetchUserData(s1.userId);
 
@@ -171,6 +180,8 @@ class _MenuState extends State<Menu> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text("Hello, $name!"),
+          s1.accVerified ? Text("Account verified") : Text("Account unverified"),
+          s1.admin ? Text("Admin account") : Container(),
           OutlinedButton(
             child: Text('My likes'),
             onPressed: () {
@@ -189,7 +200,7 @@ class _MenuState extends State<Menu> {
               _navigateAndDisplaySelection2(context);
             },
           ),
-          s1.accVerified && !s1.sentVerificationPhoto ? Container() : OutlinedButton(
+          s1.accVerified ? Container() : OutlinedButton(
             child: Text('Verify account'),
             onPressed: () {
               _navigateAndDisplaySelection(context);
@@ -197,8 +208,8 @@ class _MenuState extends State<Menu> {
           ),
           s1.admin ? OutlinedButton(
             child: Text('Verify users'),
-            onPressed: () {
-              _navigateAndDisplaySelection(context);
+            onPressed: () async {
+              _navigateAndDisplaySelection5(context);
             },
           ) : Container(),
         ]);
@@ -251,6 +262,18 @@ class _MenuState extends State<Menu> {
 
     setState(() {});
   }
+
+  void _navigateAndDisplaySelection5(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => VerifyUsersList()),
+    );
+
+    setState(() {});
+  }
 }
 
 class LoggedInSingleton {
@@ -263,7 +286,6 @@ class LoggedInSingleton {
   String email = "";
   bool accVerified = false;
   bool admin = false;
-  bool sentVerificationPhoto = false;
 
   factory LoggedInSingleton() {
     return _singleton;
@@ -276,7 +298,6 @@ class LoggedInSingleton {
     email = "";
     accVerified = false;
     admin = false;
-    sentVerificationPhoto = false;
   }
 
   LoggedInSingleton._internal();

@@ -14,6 +14,7 @@ import 'eventView.dart';
 import 'placeView.dart';
 import 'menu.dart';
 import 'commentView.dart';
+import 'package:social_share/social_share.dart';
 
 class PlaceEventList extends StatefulWidget {
   @override
@@ -103,6 +104,7 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                             Icons.whatshot_rounded),
                                         tooltip: 'Like',
                                         onPressed: () {
+                                          SocialShare.checkInstalledAppsForShare();
                                           setState(() {
                                             event.liked = !event.liked;
 

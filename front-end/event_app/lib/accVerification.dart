@@ -21,6 +21,8 @@ class AccVerificationState extends State<AccVerification> {
   late File _image;
   bool picked = false;
   String path = "";
+  String response = "";
+  bool alreadySent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +33,14 @@ class AccVerificationState extends State<AccVerification> {
           SizedBox(
             height: 32,
           ),
+          Text(
+            "Select document picture with your name and surname to verify your identity",
+            textAlign: TextAlign.center,
+          ),
           Center(
             child: GestureDetector(
                 onTap: () {
+                  print(response);
                   _showPicker(context);
                 },
                 child: picked == true
@@ -49,11 +56,6 @@ class AccVerificationState extends State<AccVerification> {
                       )
                     : Column(
                         children: [
-                          Center(
-                              child: Text(
-                            "Select document picture with your name and surname to verify your identity",
-                            textAlign: TextAlign.center,
-                          )),
                           Container(
                             decoration: BoxDecoration(
                                 color: Colors.grey[200],
@@ -68,16 +70,28 @@ class AccVerificationState extends State<AccVerification> {
                         ],
                       )),
           ),
-          picked == true ? Align(
-            alignment: Alignment(0, 0),
-            child: ElevatedButton(
-              onPressed: () {
-                sendPhoto(File(path), s1.userId);
-                s1.sentVerificationPhoto = true;
-              },
-              child: Text("Send photo to verify"),
-            ),
-          ) : Container(),
+          picked == true
+              ? Align(
+                  alignment: Alignment(0, 0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      response = await sendPhoto(File(path), s1.userId);
+
+                      if (response == "already sent") {
+                        setState(() {
+                          alreadySent = true;
+                        });
+                      }
+                    },
+                    child: Text("Send photo to verify"),
+                  ),
+                )
+              : Container(),
+          alreadySent
+              ? Text(
+                  "Verification photo already sent! Please wait while we verify your account.",
+                  textAlign: TextAlign.center)
+              : Container()
         ],
       ),
     );

@@ -394,21 +394,27 @@ Future<http.Response> sendUserDataToServer(
   );
 }
 
-Future<void> fetchUserData(String userId) async {
+Future<List<dynamic>> fetchUserData(String userId, {bool forAdminVerification = false}) async {
   var url = Uri.parse('http://10.0.2.2:8081/user/data?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  try {
-    if (response.body.isNotEmpty) {
-      List<dynamic> stringList = jsonDecode(response.body);
-      s1.accVerified = stringList[0][4];
-      s1.admin = stringList[0][5];
+  List<dynamic> stringList = jsonDecode(response.body);
+
+  if(forAdminVerification == false) {
+    try {
+      if (response.body.isNotEmpty) {
+        List<dynamic> stringList = jsonDecode(response.body);
+        s1.accVerified = stringList[0][4];
+        s1.admin = stringList[0][5];
+      }
+    } catch (err) {
+      print("Exception: $err");
     }
-  } catch (err) {
-    print("Exception: $err");
   }
+
+  return stringList;
 }
 
 Future<http.Response> sendNewEventDataToServer(
@@ -783,10 +789,11 @@ Future<String> sendComment(
   return response.body;
 }
 
-Future<void> sendPhoto(File imageFile, String userId) async {
+Future<String> sendPhoto(File imageFile, String userId) async {
   var stream = new http.ByteStream(imageFile.openRead());
   stream.cast();
 
+  String responseText = "";
   var length = await imageFile.length();
 
   var uri = Uri.parse('http://10.0.2.2:8081/photo');
@@ -798,7 +805,35 @@ Future<void> sendPhoto(File imageFile, String userId) async {
   request.files.add(multipartFile);
   var response = await request.send();
   print(response.statusCode);
-  response.stream.transform(utf8.decoder).listen((value) {
-    print(value);
-  });
+  responseText = await response.stream.transform(utf8.decoder).first;
+  print(responseText);
+
+  return responseText;
+}
+
+Future<List<dynamic>> getUserListVerification() async {
+  var url = Uri.parse('http://10.0.2.2:8081/list/verification'); //instead of localhost
+  var response = await http.get(url);
+
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  List<dynamic> stringList = jsonDecode(response.body);
+
+  return stringList;
+}
+
+Future<http.Response> adminVerifyUser(
+    String userId) {
+  var url = Uri.parse('http://10.0.2.2:8081/admin/verify/user');
+
+  return http.put(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'user_id': userId,
+    }),
+  );
 }
