@@ -189,12 +189,18 @@ class _MenuState extends State<Menu> {
               _navigateAndDisplaySelection2(context);
             },
           ),
-          s1.accVerified ? Container() : OutlinedButton(
+          s1.accVerified && !s1.sentVerificationPhoto ? Container() : OutlinedButton(
             child: Text('Verify account'),
             onPressed: () {
               _navigateAndDisplaySelection(context);
             },
           ),
+          s1.admin ? OutlinedButton(
+            child: Text('Verify users'),
+            onPressed: () {
+              _navigateAndDisplaySelection(context);
+            },
+          ) : Container(),
         ]);
   }
 
@@ -257,6 +263,7 @@ class LoggedInSingleton {
   String email = "";
   bool accVerified = false;
   bool admin = false;
+  bool sentVerificationPhoto = false;
 
   factory LoggedInSingleton() {
     return _singleton;
@@ -269,6 +276,7 @@ class LoggedInSingleton {
     email = "";
     accVerified = false;
     admin = false;
+    sentVerificationPhoto = false;
   }
 
   LoggedInSingleton._internal();

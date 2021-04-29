@@ -17,6 +17,10 @@ from datetime import date
 import decimal
 import psycopg2
 from urllib.parse import urlparse, parse_qs
+from requests_toolbelt.multipart import decoder
+from PIL import Image
+import io
+import cgi
 
 hostName = "localhost"
 serverPort = 8081
@@ -666,6 +670,48 @@ class MyServer(BaseHTTPRequestHandler):
                 print("One of the comment values too long for DB")
             except psycopg2.errors.NumericValueOutOfRange:
                 print("ID of the comment is too long for DB")
+
+            conn.commit()
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(bytes(str(id).encode('utf-8')))
+            self.wfile.flush()
+
+        elif self.path == "/photo":
+            content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+            post_data = self.rfile.read(content_length) # <--- Gets the data itself
+            print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n\n",
+                    str(self.path), str(self.headers))
+            content_type = "multipart/form-data; boundary=\"--dart-http-boundary-\""
+            data = decoder.MultipartDecoder(post_data, str(self.headers["content-type"]))
+
+            header = data.parts[0].headers[b'content-disposition'].decode("utf-8")
+            value, params = cgi.parse_header(header)
+
+            photoBytes = data.parts[0].content
+            userId = params['name']
+
+            #image = Image.open(io.BytesIO(photoBytes))
+            #image.show()
+
+            sql = "INSERT INTO verification_photos(user_id, photo_bytes) \
+            VALUES (%s,%s) RETURNING photo_id;"
+
+            try:
+                cur.execute(sql, (userId, photoBytes))
+                id = cur.fetchone()[0]
+
+                print("")
+                print("Created new photo by user. id from db: ", id)
+                print("")
+            except psycopg2.errors.UniqueViolation:
+                print("Photo already exists in the DB")
+            except psycopg2.errors.StringDataRightTruncation:
+                print("One of the photo values too long for DB")
+            except psycopg2.errors.NumericValueOutOfRange:
+                print("ID of the photo is too long for DB")
 
             conn.commit()
 

@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'client.dart';
+import 'menu.dart';
 
 class AccVerification extends StatefulWidget {
   @override
@@ -14,8 +16,11 @@ class AccVerification extends StatefulWidget {
 }
 
 class AccVerificationState extends State<AccVerification> {
+  var s1 = LoggedInSingleton();
+
   late File _image;
   bool picked = false;
+  String path = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,36 +33,51 @@ class AccVerificationState extends State<AccVerification> {
           ),
           Center(
             child: GestureDetector(
-              onTap: () {
-                _showPicker(context);
-              },
-              child: CircleAvatar(
-                radius: 55,
-                backgroundColor: Color(0xffFDCF09),
+                onTap: () {
+                  _showPicker(context);
+                },
                 child: picked == true
-                    ? ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.file(
-                    _image,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.fitHeight,
-                  ),
-                )
-                    : Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(50)),
-                  width: 100,
-                  height: 100,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ),
+                    ? Container(
+                        width: 250,
+                        height: 250,
+                        child: Image.file(
+                          _image,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.fitHeight,
+                        ),
+                      )
+                    : Column(
+                        children: [
+                          Center(
+                              child: Text(
+                            "Select document picture with your name and surname to verify your identity",
+                            textAlign: TextAlign.center,
+                          )),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(0)),
+                            width: 250,
+                            height: 250,
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      )),
+          ),
+          picked == true ? Align(
+            alignment: Alignment(0, 0),
+            child: ElevatedButton(
+              onPressed: () {
+                sendPhoto(File(path), s1.userId);
+                s1.sentVerificationPhoto = true;
+              },
+              child: Text("Send photo to verify"),
             ),
-          )
+          ) : Container(),
         ],
       ),
     );
@@ -66,8 +86,7 @@ class AccVerificationState extends State<AccVerification> {
   _imgFromCamera() async {
     ImagePicker picker = new ImagePicker();
     File image = (await picker.getImage(
-        source: ImageSource.camera, imageQuality: 50
-    )) as File;
+        source: ImageSource.camera, imageQuality: 50)) as File;
 
     setState(() {
       _image = image;
@@ -77,16 +96,17 @@ class AccVerificationState extends State<AccVerification> {
 
   _imgFromGallery() async {
     ImagePicker picker = new ImagePicker();
-    PickedFile? image = (await picker.getImage(
-        source: ImageSource.gallery, imageQuality: 50
-    ));
+    PickedFile? image =
+        (await picker.getImage(source: ImageSource.gallery, imageQuality: 50));
 
+    if (image != null) {
+      path = image.path;
 
-
-    setState(() {
-      _image = File(image!.path);
-      picked = true;
-    });
+      setState(() {
+        _image = File(path);
+        picked = true;
+      });
+    }
   }
 
   void _showPicker(context) {
@@ -116,7 +136,6 @@ class AccVerificationState extends State<AccVerification> {
               ),
             ),
           );
-        }
-    );
+        });
   }
 }

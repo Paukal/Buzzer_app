@@ -11,6 +11,8 @@ import 'dart:convert';
 import 'localDatabase.dart';
 import 'menu.dart';
 import 'commentView.dart';
+import 'package:path/path.dart';
+import 'dart:io';
 
 var s1 = LoggedInSingleton();
 
@@ -779,4 +781,24 @@ Future<String> sendComment(
   print('Response body: ${response.body}');
 
   return response.body;
+}
+
+Future<void> sendPhoto(File imageFile, String userId) async {
+  var stream = new http.ByteStream(imageFile.openRead());
+  stream.cast();
+
+  var length = await imageFile.length();
+
+  var uri = Uri.parse('http://10.0.2.2:8081/photo');
+
+  var request = new http.MultipartRequest("POST", uri);
+  var multipartFile = new http.MultipartFile(userId, stream, length,
+      filename: basename(imageFile.path));
+
+  request.files.add(multipartFile);
+  var response = await request.send();
+  print(response.statusCode);
+  response.stream.transform(utf8.decoder).listen((value) {
+    print(value);
+  });
 }
