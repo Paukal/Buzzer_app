@@ -66,10 +66,23 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<List<Place>> assignPlaceList() async {
-    return await fetchPlaceList(restPlaces, sceneryPlaces, hikingTrails,
-        forts, bikeTrails, streetArt, museums, architecture, nature,
-        history, trails, expositions, parks, sculptures,
-        churches, mounds);
+    return await fetchPlaceList(
+        restPlaces,
+        sceneryPlaces,
+        hikingTrails,
+        forts,
+        bikeTrails,
+        streetArt,
+        museums,
+        architecture,
+        nature,
+        history,
+        trails,
+        expositions,
+        parks,
+        sculptures,
+        churches,
+        mounds);
   }
 
   @override
@@ -97,47 +110,64 @@ class MapSampleState extends State<MapSample> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.event),
-                color: Colors.white,
-                tooltip: 'Show events',
-                onPressed: () {
-                  setState(() {
-                    showEvents = true;
-                    showPlaces = false;
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey[600],
+                      borderRadius: BorderRadius.circular(50)),
+                  width: 40,
+                  height: 40,
+                  child: IconButton(
+                    icon: const Icon(Icons.event),
+                    color: Colors.white,
+                    tooltip: 'Show events',
+                    onPressed: () {
+                      setState(() {
+                        showEvents = true;
+                        showPlaces = false;
 
-                    _markers.clear();
-                    _markEvents();
-                  });
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.add_location_rounded),
-                color: Colors.white,
-                tooltip: 'Show places',
-                onPressed: () {
-                  setState(() {
-                    showEvents = false;
-                    showPlaces = true;
+                        _markers.clear();
+                        _markEvents();
+                      });
+                    },
+                  )),
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey[600],
+                      borderRadius: BorderRadius.circular(50)),
+                  width: 40,
+                  height: 40,
+                  child: IconButton(
+                    icon: const Icon(Icons.add_location_rounded),
+                    color: Colors.white,
+                    tooltip: 'Show places',
+                    onPressed: () {
+                      setState(() {
+                        showEvents = false;
+                        showPlaces = true;
 
-                    _markers.clear();
-                    _markPlaces();
-                  });
-                },
-              ),
+                        _markers.clear();
+                        _markPlaces();
+                      });
+                    },
+                  )),
             ],
           ),
         ),
         Align(
-            alignment: Alignment(0.8, -0.75),
-            child: SizedBox(
-              width: 45, // <-- match_parent
-              height: 35,
-              child: ElevatedButton(
+            alignment: Alignment(0.9, -0.75),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(50)),
+              width: 40,
+              height: 40,
+              child: IconButton(
+                icon: const Icon(Icons.apps),
+                color: Colors.white,
+                tooltip: 'Filters',
                 onPressed: () {
                   _navigateAndDisplaySelection(context);
                 },
-                child: const Icon(Icons.apps, size: 20),
               ),
             )),
       ],
@@ -147,17 +177,16 @@ class MapSampleState extends State<MapSample> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    if(showEvents) {
+    if (showEvents) {
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                MapEventFilter(
-                    filterDateToday,
-                    filterDateTomorrow,
-                    filterDateThisWeek,
-                    filterDateYesterday,
-                    filterDateLastWeek)),
+            builder: (context) => MapEventFilter(
+                filterDateToday,
+                filterDateTomorrow,
+                filterDateThisWeek,
+                filterDateYesterday,
+                filterDateLastWeek)),
       );
 
       setState(() {
@@ -172,16 +201,27 @@ class MapSampleState extends State<MapSample> {
       });
     }
 
-    if(showPlaces) {
+    if (showPlaces) {
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                PlaceFilter(
-                    restPlaces, sceneryPlaces, hikingTrails,
-                    forts, bikeTrails, streetArt, museums, architecture, nature,
-                    history, trails, expositions, parks, sculptures,
-                    churches, mounds)),
+            builder: (context) => PlaceFilter(
+                restPlaces,
+                sceneryPlaces,
+                hikingTrails,
+                forts,
+                bikeTrails,
+                streetArt,
+                museums,
+                architecture,
+                nature,
+                history,
+                trails,
+                expositions,
+                parks,
+                sculptures,
+                churches,
+                mounds)),
       );
 
       setState(() {
@@ -212,7 +252,8 @@ class MapSampleState extends State<MapSample> {
     Iterator it = list.iterator;
     it.moveNext();
 
-    List<Location> locations = await locationFromAddress(it.current.address + ", " + it.current.city);
+    List<Location> locations =
+        await locationFromAddress(it.current.address + ", " + it.current.city);
     List<Location> temp;
 
     while (it.moveNext()) {
@@ -249,8 +290,8 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<void> _markEvents() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Processing Events')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Processing Events')));
 
     final GoogleMapController controller = await _controller.future;
     //final pos = await determinePosition();
@@ -283,16 +324,17 @@ class MapSampleState extends State<MapSample> {
         }
       });
     } catch (err) {
-      if(err.toString() == "type 'Null' is not a subtype of type 'Event' in type cast") {
+      if (err.toString() ==
+          "type 'Null' is not a subtype of type 'Event' in type cast") {
         _showMyDialog();
       }
-        print("exception: $err");
+      print("exception: $err");
     }
   }
 
   Future<void> _markPlaces() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Processing Places')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Processing Places')));
 
     final GoogleMapController controller = await _controller.future;
     //final pos = await determinePosition();
@@ -325,7 +367,8 @@ class MapSampleState extends State<MapSample> {
         }
       });
     } catch (err) {
-      if(err.toString() == "type 'Null' is not a subtype of type 'Place' in type cast") {
+      if (err.toString() ==
+          "type 'Null' is not a subtype of type 'Place' in type cast") {
         _showMyDialog();
       }
       print("exception: $err");
@@ -342,7 +385,8 @@ class MapSampleState extends State<MapSample> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("The selected date or category doesn't contain any events or places"),
+                Text(
+                    "The selected date or category doesn't contain any events or places"),
               ],
             ),
           ),

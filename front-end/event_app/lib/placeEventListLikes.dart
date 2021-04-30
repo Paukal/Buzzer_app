@@ -5,6 +5,7 @@
 * */
 
 import 'package:flutter/material.dart';
+import 'package:social_share/social_share.dart';
 import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'client.dart';
@@ -107,7 +108,20 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                                               },
                                             )
                                           : Container(),
-                                      Text(" Share"),
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.email),
+                                        tooltip: 'Like',
+                                        onPressed: () async {
+                                          SocialShare.shareSms(
+                                            "Come visit ${event.eventName} at ${event.placeName} at ${event.startDate}",
+                                            //url: "\nhttps://google.com/",
+                                            trailingText: "\nhello",
+                                          ).then((data) {
+                                            print(data);
+                                          });
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -220,7 +234,20 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                                               },
                                             )
                                           : Container(),
-                                      Text(" Share"),
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.email),
+                                        tooltip: 'Like',
+                                        onPressed: () async {
+                                          SocialShare.shareSms(
+                                            "Come visit ${place.placeName} which is a ${place.placeType}",
+                                            //url: "\nhttps://google.com/",
+                                            trailingText: "\nhello",
+                                          ).then((data) {
+                                            print(data);
+                                          });
+                                        },
+                                      ),
                                     ],
                                   ),
                                 ),

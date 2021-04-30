@@ -37,20 +37,25 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+        body: Container(
+            decoration: BoxDecoration(
+              color: Colors.orange[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                   s1.loggedIn ? getAccountButtons() : Container(),
                   getLogInOutButton(),
-                ])),
+                ]))),
       ),
     );
   }
 
   Widget getLogInOutButton() {
-    if(!s1.loggedIn) {
+    if (!s1.loggedIn) {
       checkUser();
     }
 
@@ -88,9 +93,9 @@ class _MenuState extends State<Menu> {
         // Check result status
         switch (res.status) {
           case FacebookLoginStatus.success:
-          // Logged in
+            // Logged in
 
-          // Send this access token to server for validation and auth
+            // Send this access token to server for validation and auth
             final accessToken = res.accessToken;
             print('Access Token: ${accessToken!.token}');
 
@@ -105,17 +110,18 @@ class _MenuState extends State<Menu> {
 
             s1.userId = profile.userId;
 
-            if(profile.firstName != null) {
+            if (profile.firstName != null) {
               s1.firstName = profile.firstName!;
             }
-            if(profile.lastName != null) {
+            if (profile.lastName != null) {
               s1.lastName = profile.lastName!;
             }
-            if(email != null) {
+            if (email != null) {
               s1.email = email;
             }
 
-            final resp = await sendUserDataToServer(s1.firstName, s1.lastName, s1.email, s1.userId);
+            final resp = await sendUserDataToServer(
+                s1.firstName, s1.lastName, s1.email, s1.userId);
             print(resp.body);
 
             await fetchUserData(s1.userId);
@@ -128,10 +134,10 @@ class _MenuState extends State<Menu> {
 
             break;
           case FacebookLoginStatus.cancel:
-          // User cancel log in
+            // User cancel log in
             break;
           case FacebookLoginStatus.error:
-          // Log in failed
+            // Log in failed
             print('Error while log in: ${res.error}');
             break;
         }
@@ -152,11 +158,10 @@ class _MenuState extends State<Menu> {
       s1.firstName = userData.values.elementAt(0).toString();
       s1.lastName = userData.values.elementAt(1).toString();
 
-      if(userData.length==4) {
+      if (userData.length == 4) {
         s1.email = userData.values.elementAt(2).toString();
         s1.userId = userData.values.elementAt(3).toString();
-      }
-      else if (userData.length==3) {
+      } else if (userData.length == 3) {
         s1.userId = userData.values.elementAt(2).toString();
       }
 
@@ -166,7 +171,6 @@ class _MenuState extends State<Menu> {
       localDB.placesStored = false;
 
       _logInButtonChange();
-
     } catch (err) {
       print("exception: $err");
     }
@@ -180,7 +184,9 @@ class _MenuState extends State<Menu> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text("Hello, $name!"),
-          s1.accVerified ? Text("Account verified") : Text("Account unverified"),
+          s1.accVerified
+              ? Text("Account verified")
+              : Text("Account unverified"),
           s1.admin ? Text("Admin account") : Container(),
           OutlinedButton(
             child: Text('My likes'),
@@ -200,18 +206,22 @@ class _MenuState extends State<Menu> {
               _navigateAndDisplaySelection2(context);
             },
           ),
-          s1.accVerified ? Container() : OutlinedButton(
-            child: Text('Verify account'),
-            onPressed: () {
-              _navigateAndDisplaySelection(context);
-            },
-          ),
-          s1.admin ? OutlinedButton(
-            child: Text('Verify users'),
-            onPressed: () async {
-              _navigateAndDisplaySelection5(context);
-            },
-          ) : Container(),
+          s1.accVerified
+              ? Container()
+              : OutlinedButton(
+                  child: Text('Verify account'),
+                  onPressed: () {
+                    _navigateAndDisplaySelection(context);
+                  },
+                ),
+          s1.admin
+              ? OutlinedButton(
+                  child: Text('Verify users'),
+                  onPressed: () async {
+                    _navigateAndDisplaySelection5(context);
+                  },
+                )
+              : Container(),
         ]);
   }
 
@@ -220,8 +230,7 @@ class _MenuState extends State<Menu> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => AccVerification()),
+      MaterialPageRoute(builder: (context) => AccVerification()),
     );
 
     setState(() {});
@@ -232,8 +241,7 @@ class _MenuState extends State<Menu> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => CreatePlaceEvent()),
+      MaterialPageRoute(builder: (context) => CreatePlaceEvent()),
     );
 
     setState(() {});
@@ -244,8 +252,7 @@ class _MenuState extends State<Menu> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => MyPlacesEvents()),
+      MaterialPageRoute(builder: (context) => MyPlacesEvents()),
     );
 
     setState(() {});
@@ -256,8 +263,7 @@ class _MenuState extends State<Menu> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => PlaceEventListLikes()),
+      MaterialPageRoute(builder: (context) => PlaceEventListLikes()),
     );
 
     setState(() {});
@@ -268,8 +274,7 @@ class _MenuState extends State<Menu> {
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => VerifyUsersList()),
+      MaterialPageRoute(builder: (context) => VerifyUsersList()),
     );
 
     setState(() {});
