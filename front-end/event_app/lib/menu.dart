@@ -60,89 +60,117 @@ class _MenuState extends State<Menu> {
     }
 
     if (s1.loggedIn) {
-      return OutlinedButton(
-        child: Text('Log Out'),
-        onPressed: () async {
-          final fb = widget.fb;
-          // Log out
-          final res = await fb.logOut();
-          localDB.deleteUser();
-          localDB.deleteAllEvents();
-          localDB.deleteAllPlaces();
-          s1.deleteData();
+      return Container(
+          width: 200.0,
+          height: 40,
+          margin: const EdgeInsets.all(2.5),
+          child: OutlinedButton(
+            child: Text('Log Out', style: TextStyle(color: Colors.orange[900])),
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.resolveWith<Color>((states) {
+                return Colors.white;
+              }),
+              shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+                return RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16));
+              }),
+            ),
+            onPressed: () async {
+              final fb = widget.fb;
+              // Log out
+              final res = await fb.logOut();
+              localDB.deleteUser();
+              localDB.deleteAllEvents();
+              localDB.deleteAllPlaces();
+              s1.deleteData();
 
-          localDB.eventsStored = false;
-          localDB.placesStored = false;
+              localDB.eventsStored = false;
+              localDB.placesStored = false;
 
-          _logInButtonChange();
-        },
-      );
+              _logInButtonChange();
+            },
+          ));
     }
 
-    return OutlinedButton(
-      child: Text('Log in with Facebook'),
-      onPressed: () async {
-        final fb = widget.fb;
+    return Container(
+        width: 200.0,
+        height: 40,
+        margin: const EdgeInsets.all(2.5),
+        child: OutlinedButton(
+          child: Text('Log in with Facebook',
+              style: TextStyle(color: Colors.orange[900])),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+              return Colors.white;
+            }),
+            shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+              return RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16));
+            }),
+          ),
+          onPressed: () async {
+            final fb = widget.fb;
 
-        // Log in
-        final res = await fb.logIn(permissions: [
-          FacebookPermission.publicProfile,
-          FacebookPermission.email,
-        ]);
+            // Log in
+            final res = await fb.logIn(permissions: [
+              FacebookPermission.publicProfile,
+              FacebookPermission.email,
+            ]);
 
-        // Check result status
-        switch (res.status) {
-          case FacebookLoginStatus.success:
-            // Logged in
+            // Check result status
+            switch (res.status) {
+              case FacebookLoginStatus.success:
+                // Logged in
 
-            // Send this access token to server for validation and auth
-            final accessToken = res.accessToken;
-            print('Access Token: ${accessToken!.token}');
+                // Send this access token to server for validation and auth
+                final accessToken = res.accessToken;
+                print('Access Token: ${accessToken!.token}');
 
-            // Get profile data
-            final profile = await fb.getUserProfile();
-            print('Hello, ${profile!.name}! You ID: ${profile.userId}');
+                // Get profile data
+                final profile = await fb.getUserProfile();
+                print('Hello, ${profile!.name}! You ID: ${profile.userId}');
 
-            // Get email (since we request email permission)
-            final email = await fb.getUserEmail();
-            // But user can decline permission
-            if (email != null) print('And your email is $email');
+                // Get email (since we request email permission)
+                final email = await fb.getUserEmail();
+                // But user can decline permission
+                if (email != null) print('And your email is $email');
 
-            s1.userId = profile.userId;
+                s1.userId = profile.userId;
 
-            if (profile.firstName != null) {
-              s1.firstName = profile.firstName!;
+                if (profile.firstName != null) {
+                  s1.firstName = profile.firstName!;
+                }
+                if (profile.lastName != null) {
+                  s1.lastName = profile.lastName!;
+                }
+                if (email != null) {
+                  s1.email = email;
+                }
+
+                final resp = await sendUserDataToServer(
+                    s1.firstName, s1.lastName, s1.email, s1.userId);
+                print(resp.body);
+
+                await fetchUserData(s1.userId);
+
+                _logInButtonChange();
+                localDB.insertUser(profile.userId, accessToken.token);
+
+                localDB.eventsStored = false;
+                localDB.placesStored = false;
+
+                break;
+              case FacebookLoginStatus.cancel:
+                // User cancel log in
+                break;
+              case FacebookLoginStatus.error:
+                // Log in failed
+                print('Error while log in: ${res.error}');
+                break;
             }
-            if (profile.lastName != null) {
-              s1.lastName = profile.lastName!;
-            }
-            if (email != null) {
-              s1.email = email;
-            }
-
-            final resp = await sendUserDataToServer(
-                s1.firstName, s1.lastName, s1.email, s1.userId);
-            print(resp.body);
-
-            await fetchUserData(s1.userId);
-
-            _logInButtonChange();
-            localDB.insertUser(profile.userId, accessToken.token);
-
-            localDB.eventsStored = false;
-            localDB.placesStored = false;
-
-            break;
-          case FacebookLoginStatus.cancel:
-            // User cancel log in
-            break;
-          case FacebookLoginStatus.error:
-            // Log in failed
-            print('Error while log in: ${res.error}');
-            break;
-        }
-      },
-    );
+          },
+        ));
   }
 
   Future<void> checkUser() async {
@@ -188,39 +216,115 @@ class _MenuState extends State<Menu> {
               ? Text("Account verified")
               : Text("Account unverified"),
           s1.admin ? Text("Admin account") : Container(),
-          OutlinedButton(
-            child: Text('My likes'),
-            onPressed: () {
-              _navigateAndDisplaySelection4(context);
-            },
-          ),
-          OutlinedButton(
-            child: Text('My places/events'),
-            onPressed: () {
-              _navigateAndDisplaySelection3(context);
-            },
-          ),
-          OutlinedButton(
-            child: Text('Add place/event'),
-            onPressed: () {
-              _navigateAndDisplaySelection2(context);
-            },
-          ),
+          Container(
+              width: 200.0,
+              height: 40,
+              margin: const EdgeInsets.all(2.5),
+              child: OutlinedButton(
+                child: Text('My likes', style: TextStyle(color: Colors.orange[900])),
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    return Colors.white;
+                  }),
+                  shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+                    return RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16));
+                  }),
+                ),
+                onPressed: () {
+                  _navigateAndDisplaySelection4(context);
+                },
+              )),
+          Container(
+              width: 200.0,
+              height: 40,
+              margin: const EdgeInsets.all(2.5),
+              child: OutlinedButton(
+                child:
+                    Text('My created', style: TextStyle(color: Colors.orange[900])),
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    return Colors.white;
+                  }),
+                  shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+                    return RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16));
+                  }),
+                ),
+                onPressed: () {
+                  _navigateAndDisplaySelection3(context);
+                },
+              )),
+          Container(
+              width: 200.0,
+              height: 40,
+              margin: const EdgeInsets.all(2.5),
+              child: OutlinedButton(
+                child:
+                    Text('Create new', style: TextStyle(color: Colors.orange[900])),
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    return Colors.white;
+                  }),
+                  shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+                    return RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16));
+                  }),
+                ),
+                onPressed: () {
+                  _navigateAndDisplaySelection2(context);
+                },
+              )),
           s1.accVerified
               ? Container()
-              : OutlinedButton(
-                  child: Text('Verify account'),
-                  onPressed: () {
-                    _navigateAndDisplaySelection(context);
-                  },
-                ),
+              : Container(
+                  width: 200.0,
+              height: 40,
+              margin: const EdgeInsets.all(2.5),
+                  child: OutlinedButton(
+                    child: Text('Verify account',
+                        style: TextStyle(color: Colors.orange[900])),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
+                        return Colors.white;
+                      }),
+                      shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
+                          (_) {
+                        return RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16));
+                      }),
+                    ),
+                    onPressed: () {
+                      _navigateAndDisplaySelection(context);
+                    },
+                  )),
           s1.admin
-              ? OutlinedButton(
-                  child: Text('Verify users'),
-                  onPressed: () async {
-                    _navigateAndDisplaySelection5(context);
-                  },
-                )
+              ? Container(
+                  width: 200.0,
+              height: 40,
+              margin: const EdgeInsets.all(2.5),
+                  child: OutlinedButton(
+                    child: Text('Verify users',
+                        style: TextStyle(color: Colors.orange[900])),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
+                        return Colors.white;
+                      }),
+                      shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
+                          (_) {
+                        return RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16));
+                      }),
+                    ),
+                    onPressed: () async {
+                      _navigateAndDisplaySelection5(context);
+                    },
+                  ))
               : Container(),
         ]);
   }

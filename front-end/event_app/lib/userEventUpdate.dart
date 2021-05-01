@@ -9,7 +9,6 @@ import 'client.dart';
 import 'eventsParse.dart';
 
 class UserEventUpdate extends StatefulWidget {
-
   Event event;
 
   UserEventUpdate(this.event);
@@ -19,7 +18,6 @@ class UserEventUpdate extends StatefulWidget {
 }
 
 class UserEventUpdateState extends State<UserEventUpdate> {
-
   Event event;
 
   UserEventUpdateState(this.event);
@@ -61,8 +59,12 @@ class UserEventUpdateState extends State<UserEventUpdate> {
         ),
         body: Form(
             key: _formKey,
-            child: Column(children: <Widget>[
-              Column(children: [
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.orange[100],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: "Event name"),
                   initialValue: eventName,
@@ -85,7 +87,7 @@ class UserEventUpdateState extends State<UserEventUpdate> {
                 ),
                 TextFormField(
                   decoration:
-                  InputDecoration(labelText: "Place name (optional)"),
+                      InputDecoration(labelText: "Place name (optional)"),
                   initialValue: placeName,
                   onTap: () {
                     setState(() {
@@ -99,8 +101,8 @@ class UserEventUpdateState extends State<UserEventUpdate> {
                   },
                 ),
                 TextFormField(
-                  decoration:
-                  InputDecoration(labelText: "Link to event page (optional)"),
+                  decoration: InputDecoration(
+                      labelText: "Link to event page (optional)"),
                   initialValue: link,
                   onTap: () {
                     setState(() {
@@ -203,13 +205,20 @@ class UserEventUpdateState extends State<UserEventUpdate> {
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Processing Data')));
 
-
-                      sendChangedEventDataToServer(eventId, eventName, placeName, link, street, city, startDate, public.toString());
+                      sendChangedEventDataToServer(
+                          eventId,
+                          eventName,
+                          placeName,
+                          link,
+                          street,
+                          city,
+                          startDate,
+                          public.toString());
                     }
                   },
                   child: Text('Submit'),
                 )
               ]),
-            ])));
+            )));
   }
 }

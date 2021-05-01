@@ -59,8 +59,13 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
         ),
         body: Form(
             key: _formKey,
-            child: Column(children: <Widget>[
-              Column(children: [
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.orange[100],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child:
+                Column(children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: "Place name"),
                   initialValue: placeName,
@@ -81,45 +86,48 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
                     return null;
                   },
                 ),
-                DropdownButton<String>(
-                  value: placeType,
-                  icon: const Icon(Icons.arrow_downward),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      placeType = newValue!;
-                    });
-                  },
-                  items: <String>[
-                    'restPlaces',
-                    'sceneryPlaces',
-                    'hikingTrails',
-                    'forts',
-                    'bikeTrails',
-                    'streetArt',
-                    'museums',
-                    'architecture',
-                    'nature',
-                    'history',
-                    'trails',
-                    'expositions',
-                    'parks',
-                    'sculptures',
-                    'churches',
-                    'mounds'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
+                  Align(
+                      alignment: Alignment(-1, 0),
+                    child: DropdownButton<String>(
+                      value: placeType,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.black),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.black,
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          placeType = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'restPlaces',
+                        'sceneryPlaces',
+                        'hikingTrails',
+                        'forts',
+                        'bikeTrails',
+                        'streetArt',
+                        'museums',
+                        'architecture',
+                        'nature',
+                        'history',
+                        'trails',
+                        'expositions',
+                        'parks',
+                        'sculptures',
+                        'churches',
+                        'mounds'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                      ),
                 TextFormField(
                   decoration:
                   InputDecoration(labelText: "Link to place page (optional)"),
@@ -211,6 +219,6 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
                   child: Text('Submit'),
                 )
               ]),
-            ])));
+            )));
   }
 }

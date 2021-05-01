@@ -75,6 +75,7 @@ class _PlaceEventListState extends State<PlaceEventList> {
               future: eventList,
               builder:
                   (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
+
                 if (snapshot.hasData) {
                   events = snapshot.data!;
                   if (events.isNotEmpty) {
@@ -101,7 +102,9 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                       height: 45,
                                       width: 367,
                                       child:
-                                          Center(child: Text(event.eventName)),
+                                          Center(child: Text(event.eventName, style: TextStyle(
+                                            fontSize: 18.0,
+                                          ), textAlign: TextAlign.center)),
                                     ),
                                     Container(
                                       height: 40,
@@ -176,8 +179,8 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                                 textAlign: TextAlign.right),
                                             Text("${event.clicks} taps   ",
                                                 textAlign: TextAlign.right),
-                                            Text("    Created by:   ",
-                                                textAlign: TextAlign.left)
+                                            /*Text("    Created by:   ",
+                                                textAlign: TextAlign.left)*/
                                           ],
                                         ))
                                   ],
@@ -196,14 +199,14 @@ class _PlaceEventListState extends State<PlaceEventList> {
                   } else {
                     return Center(
                         child: Text(
-                      'No events to show',
+                      'No events to show. Maybe still loading?',
                       textAlign: TextAlign.center,
                     ));
                   }
                 } else {
                   return Center(
                       child: Text(
-                    'No events to show',
+                    'No events to show. Maybe still loading?',
                     textAlign: TextAlign.center,
                   ));
                 }
@@ -241,7 +244,9 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                       height: 45,
                                       width: 367,
                                       child:
-                                          Center(child: Text(place.placeName)),
+                                          Center(child: Text(place.placeName, style: TextStyle(
+                                            fontSize: 18.0,
+                                          ), textAlign: TextAlign.center)),
                                     ),
                                     Container(
                                       height: 40,
@@ -316,8 +321,8 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                                 textAlign: TextAlign.right),
                                             Text("${place.clicks} taps   ",
                                                 textAlign: TextAlign.right),
-                                            Text("    Created by:   ",
-                                                textAlign: TextAlign.left)
+                                            /*Text("    Created by:   ",
+                                                textAlign: TextAlign.left)*/
                                           ],
                                         ))
                                   ],
@@ -336,14 +341,14 @@ class _PlaceEventListState extends State<PlaceEventList> {
                   } else {
                     return Center(
                         child: Text(
-                      'No places to show',
+                      'No places to show. Maybe still loading?',
                       textAlign: TextAlign.center,
                     ));
                   }
                 } else {
                   return Center(
                       child: Text(
-                    'No places to show',
+                    'No places to show. Maybe still loading?',
                     textAlign: TextAlign.center,
                   ));
                 }

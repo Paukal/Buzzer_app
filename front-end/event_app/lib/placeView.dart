@@ -52,72 +52,72 @@ class _PlaceViewState extends State<PlaceView> {
 
     beforeSevenDays = now
         .subtract(Duration(
-        days: 7,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 7,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeSixDays = now
         .subtract(Duration(
-        days: 6,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 6,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFiveDays = now
         .subtract(Duration(
-        days: 5,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 5,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFourDays = now
         .subtract(Duration(
-        days: 4,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 4,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeThreeDays = now
         .subtract(Duration(
-        days: 3,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 3,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeTwoDays = now
         .subtract(Duration(
-        days: 2,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 2,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeOneDays = now
         .subtract(Duration(
-        days: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 1,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     today = now.day.toString();
@@ -132,44 +132,70 @@ class _PlaceViewState extends State<PlaceView> {
 
     return Material(
         child: FutureBuilder<Place>(
-          future: place,
-          builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
-            if (snapshot.hasData) {
-              placeData = snapshot.data!;
-              return ListView(
-                physics: const AlwaysScrollableScrollPhysics(), // new
-                controller: _controller,
-                children: <Widget>[
-                  Image.network(placeData.photoUrl),
-                  Container(
-                    height: 50,
-                    color: Colors.amber[200],
-                    child: Center(child: Text(placeData.placeName)),
-                  ),
-                  Container(
-                    height: 50,
-                    color: Colors.amber[200],
-                    child: Center(child: Text(placeData.placeType)),
-                  ),
-                  Container(
-                    height: 50,
-                    color: Colors.amber[200],
-                    child: Center(
-                        child: new InkWell(
-                            child: new Text('LINK'),
-                            onTap: () => launch(placeData.link))),
-                  ),
-                  Container(
-                    height: 50,
-                    color: Colors.amber[200],
-                    child: Center(child: Text(placeData.address)),
-                  ),
-                  Container(
-                    height: 50,
-                    color: Colors.amber[200],
-                    child: Center(child: Text(placeData.city)),
-                  ),
-                  FutureBuilder<List<dynamic>>(
+      future: place,
+      builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
+        if (snapshot.hasData) {
+          placeData = snapshot.data!;
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(), // new
+            controller: _controller,
+            children: <Widget>[
+              Image.network(placeData.photoUrl),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.orange[400],
+                    border: Border.all(color: Colors.black, width: 0.4)),
+                height: 55,
+                width: 367,
+                child: Center(
+                    child: Text(placeData.placeName,
+                        style: TextStyle(
+                          fontSize: 18.0,
+                        ),
+                        textAlign: TextAlign.center)),
+              ),
+              Container(
+                decoration: BoxDecoration(color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+                child: Row(children: [
+                  const Icon(Icons.approval),
+                  Text("  ${placeData.placeType}")
+                ]),
+              ),
+              Container(
+                decoration: BoxDecoration(color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+                child: Center(
+                    child: new InkWell(
+                        child: Row(children: [
+                          const Icon(Icons.public),
+                          new Text('  LINK')
+                        ]),
+                        onTap: () => launch(placeData.link))),
+              ),
+              Container(
+                decoration: BoxDecoration(color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+                child: Row(children: [
+                  const Icon(Icons.add_location_rounded),
+                  Text("  ${placeData.address}")
+                ]),
+              ),
+              Container(
+                decoration: BoxDecoration(color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+                child: Row(children: [
+                  const Icon(Icons.add_location_rounded),
+                  Text("  ${placeData.city}")
+                ]),
+              ),
+              Container(
+                  decoration: BoxDecoration(color: Colors.orange[100]),
+                  child: FutureBuilder<List<dynamic>>(
                       future: likeCounts,
                       builder: (BuildContext context,
                           AsyncSnapshot<List<dynamic>> snapshot) {
@@ -196,33 +222,33 @@ class _PlaceViewState extends State<PlaceView> {
                                 LineSeries<_LikeData, String>(
                                     dataSource: data,
                                     xValueMapper: (_LikeData sales, _) =>
-                                    sales.day,
+                                        sales.day,
                                     yValueMapper: (_LikeData sales, _) =>
-                                    sales.likes,
+                                        sales.likes,
                                     name: 'Likes',
                                     // Enable data label
                                     dataLabelSettings:
-                                    DataLabelSettings(isVisible: true))
+                                        DataLabelSettings(isVisible: true))
                               ]);
                         } else {
                           return Center(
                               child: Text(
-                                'No data',
-                                textAlign: TextAlign.center,
-                              ));
+                            'No data',
+                            textAlign: TextAlign.center,
+                          ));
                         }
-                      }),
-                ],
-              );
-            } else {
-              return Center(
-                  child: Text(
-                    'Nothing to show',
-                    textAlign: TextAlign.center,
-                  ));
-            }
-          },
-        ));
+                      })),
+            ],
+          );
+        } else {
+          return Center(
+              child: Text(
+            'Nothing to show',
+            textAlign: TextAlign.center,
+          ));
+        }
+      },
+    ));
   }
 
   Future<Place> getPlaceInfo() async {

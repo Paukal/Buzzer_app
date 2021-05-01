@@ -50,8 +50,13 @@ class AddEventState extends State<AddEvent> {
         ),
         body: Form(
             key: _formKey,
-            child: Column(children: <Widget>[
-              Column(children: [
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.orange[100],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child:
+                Column(children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: "Event name"),
                   onTap: () {
@@ -100,7 +105,7 @@ class AddEventState extends State<AddEvent> {
                   },
                 ),
                 TextFormField(
-                  initialValue: "2021-07-30 19:00:00",
+                  initialValue: "2021-XX-XX XX:XX:00",
                   decoration: InputDecoration(labelText: "Start date"),
                   keyboardType: TextInputType.datetime,
                   onTap: () {
@@ -162,6 +167,6 @@ class AddEventState extends State<AddEvent> {
                   child: Text('Submit'),
                 )
               ]),
-            ])));
+            )));
   }
 }

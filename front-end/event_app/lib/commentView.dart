@@ -91,11 +91,13 @@ class _CommentViewState extends State<CommentView> {
                     final commentObject = comments.list[index];
 
                     return Container(
+                        decoration: BoxDecoration(
+                            color: Colors.orange[200],
+                            borderRadius: BorderRadius.circular(15),),
                         height: 50,
-                        color: Colors.amber[200],
                         child: Row(children: [
                           Text(commentObject.comment),
-                          Text("                                        "),
+                          new Spacer(),
                           Column(
                             children: [
                               Text(commentObject.userName),
@@ -140,16 +142,25 @@ class _CommentViewState extends State<CommentView> {
         top: 450,
         right: 60,
         left: 280,
-        child: ElevatedButton(
-          onPressed: () {
-            sendComment(
-                s1.userId, s1.firstName, object, objectId.toString(), comment);
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.grey[600],
+              borderRadius: BorderRadius.circular(50)),
+          width: 40,
+          height: 40,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_forward_ios),
+            color: Colors.white,
+            tooltip: 'Filters',
+            onPressed: () {
+              sendComment(
+                  s1.userId, s1.firstName, object, objectId.toString(), comment);
 
-            setState(() {
-              commentList = getComments(object, objectId.toString());
-            });
-          },
-          child: const Icon(Icons.navigation, size: 20),
+              setState(() {
+                commentList = getComments(object, objectId.toString());
+              });
+            },
+          ),
         ),
       )
     ]));

@@ -98,39 +98,38 @@ class CreatePlaceEventState extends State<CreatePlaceEvent> {
                 ),
               ),
             ),
-            Positioned(
-              top: 60,
-              right: 315,
-              left: 15,
-              child: DropdownButton<String>(
-                value: dropdownValue,
-                icon: const Icon(Icons.arrow_downward),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
-                items: <String>['Event', 'Place']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+              Positioned(
+                top: 70,
+                right: 310,
+                left: 15,
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white70, borderRadius: BorderRadius.circular(10)),
+                    height: 30,
+                    child: DropdownButton<String>(
+                      value: dropdownValue,
+                      iconSize: 24,
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.indigo),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                      items: <String>['Event', 'Place']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    )),
               ),
-            ),
             showAddButton
                 ? Positioned(
                     top: 60,
-                    right: 135,
-                    left: 185,
+                    right: 220,
+                    left: 100,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: ElevatedButton(

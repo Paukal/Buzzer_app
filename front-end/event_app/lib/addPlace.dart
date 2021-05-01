@@ -47,8 +47,12 @@ class AddPlaceState extends State<AddPlace> {
         ),
         body: Form(
             key: _formKey,
-            child: Column(children: <Widget>[
-              Column(children: [
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.orange[100],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: "Place name"),
                   onTap: () {
@@ -68,44 +72,47 @@ class AddPlaceState extends State<AddPlace> {
                     return null;
                   },
                 ),
-                DropdownButton<String>(
-                  value: placeType,
-                  icon: const Icon(Icons.arrow_downward),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
+                Align(
+                  alignment: Alignment(-1, 0),
+                  child: DropdownButton<String>(
+                    value: placeType,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.black),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.black,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        placeType = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'restPlaces',
+                      'sceneryPlaces',
+                      'hikingTrails',
+                      'forts',
+                      'bikeTrails',
+                      'streetArt',
+                      'museums',
+                      'architecture',
+                      'nature',
+                      'history',
+                      'trails',
+                      'expositions',
+                      'parks',
+                      'sculptures',
+                      'churches',
+                      'mounds'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      placeType = newValue!;
-                    });
-                  },
-                  items: <String>[
-                    'restPlaces',
-                    'sceneryPlaces',
-                    'hikingTrails',
-                    'forts',
-                    'bikeTrails',
-                    'streetArt',
-                    'museums',
-                    'architecture',
-                    'nature',
-                    'history',
-                    'trails',
-                    'expositions',
-                    'parks',
-                    'sculptures',
-                    'churches',
-                    'mounds'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -151,7 +158,8 @@ class AddPlaceState extends State<AddPlace> {
                           SnackBar(content: Text('Processing Data')));
 
                       userId = s1.userId;
-                      photoUrl = "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
+                      photoUrl =
+                          "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
 
                       sendNewPlaceDataToServer(placeName, placeType, link,
                           street, city, public.toString(), userId, photoUrl);
@@ -160,6 +168,6 @@ class AddPlaceState extends State<AddPlace> {
                   child: Text('Submit'),
                 )
               ]),
-            ])));
+            )));
   }
 }

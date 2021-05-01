@@ -141,39 +141,63 @@ class _EventViewState extends State<EventView> {
             children: <Widget>[
               Image.network(eventData.photoUrl),
               Container(
-                height: 50,
-                color: Colors.amber[200],
-                child: Center(child: Text(eventData.eventName)),
+                decoration: BoxDecoration(
+                    color: Colors.orange[400],
+                    border: Border.all(color: Colors.black, width: 0.4)),
+                height: 55,
+                width: 367,
+                child: Center(child: Text(eventData.eventName, style: TextStyle(
+                  fontSize: 18.0,
+                ), textAlign: TextAlign.center)),
               ),
               Container(
-                height: 50,
-                color: Colors.amber[200],
-                child: Center(child: Text(eventData.placeName)),
+                decoration: BoxDecoration(
+                    color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+                child: Row(children: [
+                const Icon(Icons.account_balance_outlined), Text("  ${eventData.placeName}")]),
               ),
               Container(
-                height: 50,
-                color: Colors.amber[200],
+                decoration: BoxDecoration(
+                    color: Colors.orange[200]),
+                height: 45,
+                width: 367,
                 child: Center(
                     child: new InkWell(
-                        child: new Text('LINK'),
+                        child: Row(children: [
+                            const Icon(Icons.public), new Text('  LINK')]),
                         onTap: () => launch(eventData.link))),
               ),
               Container(
-                height: 50,
-                color: Colors.amber[200],
-                child: Center(child: Text(eventData.address)),
+                decoration: BoxDecoration(
+                    color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+        child: Row(children: [
+        const Icon(Icons.add_location_rounded), Text("  ${eventData.address}")]),
               ),
               Container(
-                height: 50,
-                color: Colors.amber[200],
-                child: Center(child: Text(eventData.city)),
+                decoration: BoxDecoration(
+                    color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+        child: Row(children: [
+        const Icon(Icons.add_location_rounded), Text("  ${eventData.city}")]),
               ),
               Container(
-                height: 50,
-                color: Colors.amber[200],
-                child: Center(child: Text(eventData.startDate)),
+                decoration: BoxDecoration(
+                    color: Colors.orange[200]),
+                height: 45,
+                width: 367,
+        child: Row(children: [
+        const Icon(Icons.event), Text("  ${eventData.startDate}")]),
               ),
-              FutureBuilder<List<dynamic>>(
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.orange[100]),
+                  child:
+                  FutureBuilder<List<dynamic>>(
                   future: likeCounts,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<dynamic>> snapshot) {
@@ -199,8 +223,7 @@ class _EventViewState extends State<EventView> {
                           series: <ChartSeries<_LikeData, String>>[
                             LineSeries<_LikeData, String>(
                                 dataSource: data,
-                                xValueMapper: (_LikeData sales, _) =>
-                                    sales.day,
+                                xValueMapper: (_LikeData sales, _) => sales.day,
                                 yValueMapper: (_LikeData sales, _) =>
                                     sales.likes,
                                 name: 'Likes',
@@ -215,7 +238,7 @@ class _EventViewState extends State<EventView> {
                         textAlign: TextAlign.center,
                       ));
                     }
-                  }),
+                  })),
             ],
           );
         } else {

@@ -117,7 +117,7 @@ class MapSampleState extends State<MapSample> {
                   width: 40,
                   height: 40,
                   child: IconButton(
-                    icon: const Icon(Icons.event),
+                    icon: showEvents ? const Icon(Icons.event, color: Colors.orange,) : const Icon(Icons.event),
                     color: Colors.white,
                     tooltip: 'Show events',
                     onPressed: () {
@@ -137,7 +137,7 @@ class MapSampleState extends State<MapSample> {
                   width: 40,
                   height: 40,
                   child: IconButton(
-                    icon: const Icon(Icons.add_location_rounded),
+                    icon: showPlaces ? const Icon(Icons.add_location_rounded, color: Colors.orange) : const Icon(Icons.add_location_rounded),
                     color: Colors.white,
                     tooltip: 'Show places',
                     onPressed: () {
