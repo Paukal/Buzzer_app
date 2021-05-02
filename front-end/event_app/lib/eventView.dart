@@ -10,6 +10,8 @@ import 'eventsParse.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'menu.dart';
+
 class _LikeData {
   _LikeData(this.day, this.likes);
 
@@ -28,6 +30,8 @@ class EventView extends StatefulWidget {
 
 class _EventViewState extends State<EventView> {
   _EventViewState(this.eventId);
+
+  var s1 = LoggedInSingleton();
 
   late String eventId;
   late Future<Event> event;
@@ -193,7 +197,7 @@ class _EventViewState extends State<EventView> {
         child: Row(children: [
         const Icon(Icons.event), Text("  ${eventData.startDate}")]),
               ),
-              Container(
+              s1.loggedIn ? Container(
                   decoration: BoxDecoration(
                       color: Colors.orange[100]),
                   child:
@@ -238,7 +242,7 @@ class _EventViewState extends State<EventView> {
                         textAlign: TextAlign.center,
                       ));
                     }
-                  })),
+                  })) : Container(),
             ],
           );
         } else {

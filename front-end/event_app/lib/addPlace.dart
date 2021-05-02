@@ -30,7 +30,7 @@ class AddPlaceState extends State<AddPlace> {
   final _formKey = GlobalKey<FormState>();
 
   String placeName = "";
-  String placeType = 'restPlaces';
+  String placeType = 'Rest places';
   String link = "";
   String userId = "";
   String photoUrl = "";
@@ -90,22 +90,22 @@ class AddPlaceState extends State<AddPlace> {
                       });
                     },
                     items: <String>[
-                      'restPlaces',
-                      'sceneryPlaces',
-                      'hikingTrails',
-                      'forts',
-                      'bikeTrails',
-                      'streetArt',
-                      'museums',
-                      'architecture',
-                      'nature',
-                      'history',
-                      'trails',
-                      'expositions',
-                      'parks',
-                      'sculptures',
-                      'churches',
-                      'mounds'
+                      'Rest places',
+                      'Scenery places',
+                      'Hiking trails',
+                      'Forts',
+                      'Bike trails',
+                      'Street art',
+                      'Museums',
+                      'Architecture',
+                      'Nature',
+                      'History',
+                      'Trails',
+                      'Expositions',
+                      'Parks',
+                      'Sculptures',
+                      'Churches',
+                      'Mounds'
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -160,6 +160,39 @@ class AddPlaceState extends State<AddPlace> {
                       userId = s1.userId;
                       photoUrl =
                           "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
+
+                      if (placeType == "Rest places")
+                        placeType = 'restPlaces';
+                      else if (placeType == "Scenery places")
+                        placeType = 'sceneryPlaces';
+                      else if (placeType == "Hiking trails")
+                        placeType = 'hikingTrails';
+                      else if (placeType == "Forts")
+                        placeType = 'forts';
+                      else if (placeType == "Bike trails")
+                        placeType = 'bikeTrails';
+                      else if (placeType == "Street art")
+                        placeType = 'streetArt';
+                      else if (placeType == "Museums")
+                        placeType = 'museums';
+                      else if (placeType == "Architecture")
+                        placeType = 'architecture';
+                      else if (placeType == "Nature")
+                        placeType = 'nature';
+                      else if (placeType == "History")
+                        placeType = 'history';
+                      else if (placeType == "Trails")
+                        placeType = 'trails';
+                      else if (placeType == "Expositions")
+                        placeType = 'expositions';
+                      else if (placeType == "Parks")
+                        placeType = 'parks';
+                      else if (placeType == "Sculptures")
+                        placeType = 'sculptures';
+                      else if (placeType == "Churches")
+                        placeType = 'churches';
+                      else if (placeType == "Mounds")
+                        placeType = 'mounds';
 
                       sendNewPlaceDataToServer(placeName, placeType, link,
                           street, city, public.toString(), userId, photoUrl);

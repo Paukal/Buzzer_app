@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'client.dart';
+import 'menu.dart';
 import 'placesParse.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,6 +29,8 @@ class PlaceView extends StatefulWidget {
 
 class _PlaceViewState extends State<PlaceView> {
   _PlaceViewState(this.placeId);
+
+  var s1 = LoggedInSingleton();
 
   late String placeId;
   late Future<Place> place;
@@ -136,6 +139,42 @@ class _PlaceViewState extends State<PlaceView> {
       builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
         if (snapshot.hasData) {
           placeData = snapshot.data!;
+
+          String placeType = placeData.placeType;
+
+          if (placeType == "restPlaces")
+            placeType = 'Rest places';
+          else if (placeType == "sceneryPlaces")
+            placeType = 'Scenery places';
+          else if (placeType == "hikingTrails")
+            placeType = 'Hiking trails';
+          else if (placeType == "forts")
+            placeType = 'Forts';
+          else if (placeType == "bikeTrails")
+            placeType = 'Bike trails';
+          else if (placeType == "streetArt")
+            placeType = 'Street art';
+          else if (placeType == "museums")
+            placeType = 'Museums';
+          else if (placeType == "architecture")
+            placeType = 'Architecture';
+          else if (placeType == "nature")
+            placeType = 'Nature';
+          else if (placeType == "history")
+            placeType = 'History';
+          else if (placeType == "trails")
+            placeType = 'Trails';
+          else if (placeType == "expositions")
+            placeType = 'Expositions';
+          else if (placeType == "parks")
+            placeType = 'Parks';
+          else if (placeType == "sculptures")
+            placeType = 'Sculptures';
+          else if (placeType == "churches")
+            placeType = 'Churches';
+          else if (placeType == "mounds")
+            placeType = 'Mounds';
+
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(), // new
             controller: _controller,
@@ -160,7 +199,7 @@ class _PlaceViewState extends State<PlaceView> {
                 width: 367,
                 child: Row(children: [
                   const Icon(Icons.approval),
-                  Text("  ${placeData.placeType}")
+                  Text("  $placeType")
                 ]),
               ),
               Container(
@@ -193,7 +232,7 @@ class _PlaceViewState extends State<PlaceView> {
                   Text("  ${placeData.city}")
                 ]),
               ),
-              Container(
+              s1.loggedIn ? Container(
                   decoration: BoxDecoration(color: Colors.orange[100]),
                   child: FutureBuilder<List<dynamic>>(
                       future: likeCounts,
@@ -237,7 +276,7 @@ class _PlaceViewState extends State<PlaceView> {
                             textAlign: TextAlign.center,
                           ));
                         }
-                      })),
+                      })) : Container(),
             ],
           );
         } else {
