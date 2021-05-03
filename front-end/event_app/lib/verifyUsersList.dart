@@ -1,20 +1,13 @@
 /*
 * Lets Go App
 * Paulius Tomas Kalvers
-* Listing of events/places logic
+* Listing of users to verify
 * */
 
 import 'package:event_app/verifyUserView.dart';
 import 'package:flutter/material.dart';
-import 'eventsParse.dart';
-import 'placesParse.dart';
 import 'client.dart';
-import 'eventFilter.dart';
-import 'placeFilter.dart';
-import 'eventView.dart';
-import 'placeView.dart';
 import 'menu.dart';
-import 'commentView.dart';
 
 class VerifyUsersList extends StatefulWidget {
   @override

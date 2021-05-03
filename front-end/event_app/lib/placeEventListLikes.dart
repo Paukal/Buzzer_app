@@ -9,8 +9,6 @@ import 'package:social_share/social_share.dart';
 import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'client.dart';
-import 'eventFilter.dart';
-import 'placeFilter.dart';
 import 'eventView.dart';
 import 'placeView.dart';
 import 'menu.dart';

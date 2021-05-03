@@ -1,11 +1,11 @@
+/*
+* Lets Go App
+* Paulius Tomas Kalvers
+* Comment view logic
+* */
+
 import 'package:flutter/material.dart';
-import 'eventsParse.dart';
-import 'placesParse.dart';
 import 'client.dart';
-import 'eventFilter.dart';
-import 'placeFilter.dart';
-import 'eventView.dart';
-import 'placeView.dart';
 import 'menu.dart';
 
 class CommentCollection {

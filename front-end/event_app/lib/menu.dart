@@ -4,8 +4,6 @@
 * User menu logic
 * */
 
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'client.dart';

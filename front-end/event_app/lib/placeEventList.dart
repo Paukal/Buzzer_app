@@ -5,7 +5,6 @@
 * */
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'eventsParse.dart';
 import 'placesParse.dart';
 import 'client.dart';
@@ -16,7 +15,6 @@ import 'placeView.dart';
 import 'menu.dart';
 import 'commentView.dart';
 import 'package:social_share/social_share.dart';
-import 'dart:io';
 
 class PlaceEventList extends StatefulWidget {
   @override

@@ -1,14 +1,13 @@
 /*
 * Lets Go App
 * Paulius Tomas Kalvers
-* Single event preview logic
+* User verification by admin view
 * */
 
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'client.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class VerifyUserView extends StatefulWidget {
   final String userId;
