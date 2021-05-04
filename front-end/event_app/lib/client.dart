@@ -118,15 +118,19 @@ Future<List<Event>> fetchEventListLiked() async {
   return filteredList;
 }
 
-Future<List<Event>> fetchEventData() async {
+Future<List<Event>> fetchEventData({String testResponse = ""}) async {
   var url = Uri.parse('http://10.0.2.2:8081/events?userId=${s1.userId}'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
+  String responseBody = response.body;
 
   try {
-    if (response.body.isNotEmpty) {
-      List<dynamic> stringList = jsonDecode(response.body);
+    if(testResponse != "") {
+      responseBody = testResponse;
+    }
+    if (responseBody.isNotEmpty) {
+      List<dynamic> stringList = jsonDecode(responseBody);
       EventCollection collection = EventCollection.fromJson(stringList);
       print('Parsed: ${collection.list.first.address}');
 
@@ -341,15 +345,19 @@ Future<List<Place>> fetchPlaceListLiked() async {
   return filteredList;
 }
 
-Future<List<Place>> fetchPlaceData() async {
+Future<List<Place>> fetchPlaceData({String testResponse = ""}) async {
   var url = Uri.parse('http://10.0.2.2:8081/places?userId=${s1.userId}'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
+  String responseBody = response.body;
 
   try {
-    if (response.body.isNotEmpty) {
-      List<dynamic> stringList = jsonDecode(response.body);
+    if(testResponse != "") {
+      responseBody = testResponse;
+    }
+    if (responseBody.isNotEmpty) {
+      List<dynamic> stringList = jsonDecode(responseBody);
       PlaceCollection collection = PlaceCollection.fromJson(stringList);
       print('Parsed: ${collection.list.first.address}');
 
@@ -394,13 +402,19 @@ Future<http.Response> sendUserDataToServer(
   );
 }
 
-Future<List<dynamic>> fetchUserData(String userId, {bool forAdminVerification = false}) async {
+Future<List<dynamic>> fetchUserData(String userId, {bool forAdminVerification = false, String testResponse = ""}) async {
   var url = Uri.parse('http://10.0.2.2:8081/user/data?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+    if(testResponse != "") {
+      responseBody = testResponse;
+    }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
 
   if(forAdminVerification == false) {
     try {
@@ -477,14 +491,20 @@ Future<http.Response> sendNewPlaceDataToServer(
   );
 }
 
-Future<List<Event>> fetchUserEventData(String userId) async {
+Future<List<Event>> fetchUserEventData(String userId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/user/events?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
   EventCollection collection = EventCollection.fromJson(stringList);
 
   print('Parsed: ${collection.list.first.address}');
@@ -492,14 +512,20 @@ Future<List<Event>> fetchUserEventData(String userId) async {
   return collection.list;
 }
 
-Future<List<Place>> fetchUserPlaceData(String userId) async {
+Future<List<Place>> fetchUserPlaceData(String userId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/user/places?userId=$userId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
   PlaceCollection collection = PlaceCollection.fromJson(stringList);
 
   print('Parsed: ${collection.list.first.address}');
@@ -507,14 +533,20 @@ Future<List<Place>> fetchUserPlaceData(String userId) async {
   return collection.list;
 }
 
-Future<Event> fetchEventViewData(String eventId) async {
+Future<Event> fetchEventViewData(String eventId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/eventview?eventId=$eventId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
   EventCollection collection = EventCollection.fromJson(stringList);
 
   print('Parsed: ${collection.list.first.address}');
@@ -559,14 +591,20 @@ void sendDeleteEventDataToServer(String eventId) async {
   print('Response body: ${response.body}');
 }
 
-Future<Place> fetchPlaceViewData(String placeId) async {
+Future<Place> fetchPlaceViewData(String placeId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/placeview?placeId=$placeId'); //instead of localhost
   var response = await http.get(url);
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
   PlaceCollection collection = PlaceCollection.fromJson(stringList);
 
   print('Parsed: ${collection.list.first.address}');
@@ -656,15 +694,21 @@ void sendUnpressedLike(String likeId) async {
   print('Response body: ${response.body}');
 }
 
-Future<String> getLikeStatus(String userId, String object, String objectId) async {
+Future<String> getLikeStatus(String userId, String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/user/like?userId=$userId&object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
-  if(response.body!="[]"){
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  if(responseBody!="[]"){
     print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    List<dynamic> stringList = jsonDecode(response.body);
+    print('Response body: $responseBody');
+    List<dynamic> stringList = jsonDecode(responseBody);
 
     return (stringList[0][0]).toString();
   }
@@ -672,16 +716,22 @@ Future<String> getLikeStatus(String userId, String object, String objectId) asyn
   return "";
 }
 
-Future<String> getLikeCount(String object, String objectId) async {
+Future<String> getLikeCount(String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
-      'http://10.0.2.2:8081/like/count?&object=$object&objectId=$objectId'); //instead of localhost
+      'http://10.0.2.2:8081/like/count?object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
-  if(response.body!="[]"){
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  String responseBody = response.body;
 
-    return response.body;
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  if(responseBody!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: $responseBody');
+
+    return responseBody;
   }
 
   return "";
@@ -717,31 +767,43 @@ Future<http.Response> placeClick(
   );
 }
 
-Future<String> getClickCount(String object, String objectId) async {
+Future<String> getClickCount(String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
-      'http://10.0.2.2:8081/click/count?&object=$object&objectId=$objectId'); //instead of localhost
+      'http://10.0.2.2:8081/click/count?object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
-  if(response.body!="[]"){
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  String responseBody = response.body;
 
-    return response.body;
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  if(responseBody!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${responseBody}');
+
+    return responseBody;
   }
 
   return "";
 }
 
-Future<List<dynamic>> getLikeChart(String object, String objectId) async {
+Future<List<dynamic>> getLikeChart(String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
-      'http://10.0.2.2:8081/like/chart?&object=$object&objectId=$objectId'); //instead of localhost
+      'http://10.0.2.2:8081/like/chart?object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
-  if(response.body!="[]"){
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  String responseBody = response.body;
 
-    List<dynamic> stringList = jsonDecode(response.body);
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  if(responseBody!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: $responseBody');
+
+    List<dynamic> stringList = jsonDecode(responseBody);
 
     return stringList;
   }
@@ -749,15 +811,21 @@ Future<List<dynamic>> getLikeChart(String object, String objectId) async {
   return List.empty();
 }
 
-Future<CommentCollection> getComments(String object, String objectId) async {
+Future<CommentCollection> getComments(String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
-      'http://10.0.2.2:8081/comments?&object=$object&objectId=$objectId'); //instead of localhost
+      'http://10.0.2.2:8081/comments?object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);
 
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
   CommentCollection collection = CommentCollection.fromJson(stringList);
 
   return collection;
@@ -811,14 +879,20 @@ Future<String> sendPhoto(File imageFile, String userId) async {
   return responseText;
 }
 
-Future<List<dynamic>> getUserListVerification() async {
+Future<List<dynamic>> getUserListVerification({String testResponse = ""}) async {
   var url = Uri.parse('http://10.0.2.2:8081/list/verification'); //instead of localhost
   var response = await http.get(url);
 
   print('Response status: ${response.statusCode}');
   print('Response body: ${response.body}');
 
-  List<dynamic> stringList = jsonDecode(response.body);
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  List<dynamic> stringList = jsonDecode(responseBody);
 
   return stringList;
 }

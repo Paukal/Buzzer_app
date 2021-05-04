@@ -88,7 +88,7 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("Change event details"),
+          title: Text("Change place details"),
         ),
         body: Form(
             key: _formKey,
