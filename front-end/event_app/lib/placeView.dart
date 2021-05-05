@@ -133,7 +133,9 @@ class _PlaceViewState extends State<PlaceView> {
     Place placeData;
     ScrollController _controller = new ScrollController();
 
-    return Material(
+    return Scaffold(
+        appBar: AppBar(title: Text("Place"),),
+    body:  Material(
         child: FutureBuilder<Place>(
       future: place,
       builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
@@ -287,7 +289,7 @@ class _PlaceViewState extends State<PlaceView> {
           ));
         }
       },
-    ));
+    )));
   }
 
   Future<Place> getPlaceInfo() async {

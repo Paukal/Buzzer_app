@@ -39,7 +39,9 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
     List<Event> events;
     List<Place> places;
 
-    return Material(
+    return Scaffold(
+        appBar: AppBar(title: Text("My likes"),),
+    body:  Material(
         child: Stack(children: [
           dropdownValue == 'Events'
               ? FutureBuilder<List<Event>>(
@@ -327,7 +329,7 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
           )
               : Container(),
           Positioned(
-            top: 90,
+            top: 20,
             right: 310,
             left: 15,
             child: Container(
@@ -353,7 +355,7 @@ class _PlaceEventListState extends State<PlaceEventListLikes> {
                   }).toList(),
                 )),
           ),
-        ]));
+        ])));
   }
 
   Future<void> pressedLikeEvent(Event event) async {

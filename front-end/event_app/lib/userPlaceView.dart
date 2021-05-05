@@ -131,7 +131,9 @@ class _UserPlaceViewState extends State<UserPlaceView> {
     Place placeData;
     ScrollController _controller = new ScrollController();
 
-    return Material(
+    return Scaffold(
+        appBar: AppBar(title: Text("My place"),),
+    body:  Material(
         child: FutureBuilder<Place>(
           future: place,
           builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
@@ -319,7 +321,7 @@ class _UserPlaceViewState extends State<UserPlaceView> {
                   ));
             }
           },
-        ));
+        )));
   }
 
   void _navigateAndDisplaySelection(BuildContext context, Place place) async {

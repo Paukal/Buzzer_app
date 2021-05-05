@@ -39,7 +39,9 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
     List<Event> events;
     List<Place> places;
 
-    return Material(
+    return Scaffold(
+        appBar: AppBar(title: Text("My created"),),
+    body:  Material(
         child: Stack(children: [
           dropdownValue == 'Events'
               ? FutureBuilder<List<Event>>(
@@ -327,7 +329,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
           )
               : Container(),
           Positioned(
-            top: 90,
+            top: 20,
             right: 310,
             left: 15,
             child: Container(
@@ -353,7 +355,7 @@ class _MyPlacesEventsState extends State<MyPlacesEvents> {
                   }).toList(),
                 )),
           ),
-        ]));
+        ])));
   }
 
   void _navigateAndDisplaySelection(BuildContext context, int eventId) async {

@@ -130,7 +130,9 @@ class _UserEventViewState extends State<UserEventView> {
     Event eventData;
     ScrollController _controller = new ScrollController();
 
-    return Material(
+    return Scaffold(
+        appBar: AppBar(title: Text("My event"),),
+    body:  Material(
         child: FutureBuilder<Event>(
           future: event,
           builder: (BuildContext context, AsyncSnapshot<Event> snapshot) {
@@ -284,7 +286,7 @@ class _UserEventViewState extends State<UserEventView> {
                   ));
             }
           },
-        ));
+        )));
   }
 
   Future<Event> getEventInfo() async {

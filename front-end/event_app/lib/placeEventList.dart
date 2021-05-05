@@ -87,11 +87,11 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10)),
                               width: 400,
-                              height: 400,
+                              height: 350,
                               child: InkWell(
                                 child: Column(
                                   children: <Widget>[
-                                    Image.network(event.photoUrl, width: 367),
+                                    Image.network(event.photoUrl, width: 367, height: 200,),
                                     Container(
                                       decoration: BoxDecoration(
                                           color: Colors.orange[400],
