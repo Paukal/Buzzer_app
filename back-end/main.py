@@ -310,6 +310,33 @@ class MyServer(BaseHTTPRequestHandler):
             self.wfile.write(bytes(str(num).encode('utf-8')))
             self.wfile.flush()
 
+        elif "/comment/count" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            object = ' '.join([str(elem) for elem in query_components["object"]])
+            objectId = int(' '.join([str(elem) for elem in query_components["objectId"]]))
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "SELECT COUNT(*) FROM public.comments WHERE object = %s and object_id = %s"
+
+            try:
+                cur.execute(sql, (object, objectId))
+                num = cur.fetchone()[0]
+
+            except psycopg2.errors.InFailedSqlTransaction:
+                pass
+            except TypeError:
+                pass
+
+            #print("raw list: ", list)
+
+            #print("DB returned json: ", json_string.decode())
+
+            self.wfile.write(bytes(str(num).encode('utf-8')))
+            self.wfile.flush()
+
         elif "/like/chart" in self.path:
             query_components = parse_qs(urlparse(self.path).query)
             object = ' '.join([str(elem) for elem in query_components["object"]])
@@ -997,6 +1024,23 @@ class MyServer(BaseHTTPRequestHandler):
             sql = "DELETE FROM public.likes WHERE like_id = %s"
 
             cur.execute(sql, likeId)
+
+            conn.commit()
+            #print("raw list: ", list)
+
+            self.wfile.flush()
+
+        elif "/user/comment/delete" in self.path:
+            query_components = parse_qs(urlparse(self.path).query)
+            commentId = query_components["commentId"]
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+
+            sql = "DELETE FROM public.comments WHERE comment_id = %s"
+
+            cur.execute(sql, commentId)
 
             conn.commit()
             #print("raw list: ", list)

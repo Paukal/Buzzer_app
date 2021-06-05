@@ -4,6 +4,7 @@
 * Single event preview logic
 * */
 
+import 'package:event_app/myPlacesEvents.dart';
 import 'package:event_app/userEventUpdate.dart';
 import 'package:flutter/material.dart';
 import 'client.dart';
@@ -52,72 +53,72 @@ class _UserEventViewState extends State<UserEventView> {
     event = getEventInfo();
     beforeSevenDays = now
         .subtract(Duration(
-        days: 7,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 7,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeSixDays = now
         .subtract(Duration(
-        days: 6,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 6,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFiveDays = now
         .subtract(Duration(
-        days: 5,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 5,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFourDays = now
         .subtract(Duration(
-        days: 4,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 4,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeThreeDays = now
         .subtract(Duration(
-        days: 3,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 3,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeTwoDays = now
         .subtract(Duration(
-        days: 2,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 2,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeOneDays = now
         .subtract(Duration(
-        days: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 1,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     today = now.day.toString();
@@ -131,9 +132,11 @@ class _UserEventViewState extends State<UserEventView> {
     ScrollController _controller = new ScrollController();
 
     return Scaffold(
-        appBar: AppBar(title: Text("My event"),),
-    body:  Material(
-        child: FutureBuilder<Event>(
+        appBar: AppBar(
+          title: Text("My event"),
+        ),
+        body: Material(
+            child: FutureBuilder<Event>(
           future: event,
           builder: (BuildContext context, AsyncSnapshot<Event> snapshot) {
             if (snapshot.hasData) {
@@ -143,23 +146,24 @@ class _UserEventViewState extends State<UserEventView> {
                 controller: _controller,
                 children: <Widget>[
                   Image.network(eventData.photoUrl),
-                  Row(children: [                  Align(
-                      alignment: Alignment(0.9, -0.75),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey[600],
-                            borderRadius: BorderRadius.circular(10)),
-                        width: 196.3,
-                        height: 40,
-                        child: IconButton(
-                          icon: const Icon(Icons.edit),
-                          color: Colors.white,
-                          tooltip: 'Edit event',
-                          onPressed: () {
-                            _navigateAndDisplaySelection(context, eventData);
-                          },
-                        ),
-                      )),
+                  Row(children: [
+                    Align(
+                        alignment: Alignment(0.9, -0.75),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey[600],
+                              borderRadius: BorderRadius.circular(10)),
+                          width: 196.3,
+                          height: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit),
+                            color: Colors.white,
+                            tooltip: 'Edit event',
+                            onPressed: () {
+                              _navigateAndDisplaySelection(context, eventData);
+                            },
+                          ),
+                        )),
                     Align(
                         alignment: Alignment(0.9, -0.75),
                         child: Container(
@@ -176,65 +180,72 @@ class _UserEventViewState extends State<UserEventView> {
                               deleteEvent();
                             },
                           ),
-                        )),]),
+                        )),
+                  ]),
                   Container(
                     decoration: BoxDecoration(
                         color: Colors.orange[400],
                         border: Border.all(color: Colors.black, width: 0.4)),
                     height: 55,
                     width: 367,
-                    child: Center(child: Text(eventData.eventName, style: TextStyle(
-                      fontSize: 18.0,
-                    ), textAlign: TextAlign.center)),
+                    child: Center(
+                        child: Text(eventData.eventName,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                            ),
+                            textAlign: TextAlign.center)),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.orange[200]),
+                    decoration: BoxDecoration(color: Colors.orange[200]),
                     height: 45,
                     width: 367,
                     child: Row(children: [
-                      const Icon(Icons.account_balance_outlined), Text("  ${eventData.placeName}")]),
+                      const Icon(Icons.account_balance_outlined),
+                      Text("  ${eventData.placeName}")
+                    ]),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.orange[200]),
+                    decoration: BoxDecoration(color: Colors.orange[200]),
                     height: 45,
                     width: 367,
                     child: Center(
                         child: new InkWell(
                             child: Row(children: [
-                              const Icon(Icons.public), new Text('  LINK')]),
+                              const Icon(Icons.public),
+                              new Text('  LINK')
+                            ]),
                             onTap: () => launch(eventData.link))),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.orange[200]),
+                    decoration: BoxDecoration(color: Colors.orange[200]),
                     height: 45,
                     width: 367,
                     child: Row(children: [
-                      const Icon(Icons.add_location_rounded), Text("  ${eventData.address}")]),
+                      const Icon(Icons.add_location_rounded),
+                      Text("  ${eventData.address}")
+                    ]),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.orange[200]),
+                    decoration: BoxDecoration(color: Colors.orange[200]),
                     height: 45,
                     width: 367,
                     child: Row(children: [
-                      const Icon(Icons.add_location_rounded), Text("  ${eventData.city}")]),
+                      const Icon(Icons.add_location_rounded),
+                      Text("  ${eventData.city}")
+                    ]),
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        color: Colors.orange[200]),
+                    decoration: BoxDecoration(color: Colors.orange[200]),
                     height: 45,
                     width: 367,
                     child: Row(children: [
-                      const Icon(Icons.event), Text("  ${eventData.startDate}")]),
+                      const Icon(Icons.event),
+                      Text("  ${eventData.startDate}")
+                    ]),
                   ),
                   Container(
-                      decoration: BoxDecoration(
-                          color: Colors.orange[100]),
-                      child:
-                      FutureBuilder<List<dynamic>>(
+                      decoration: BoxDecoration(color: Colors.orange[100]),
+                      child: FutureBuilder<List<dynamic>>(
                           future: likeCounts,
                           builder: (BuildContext context,
                               AsyncSnapshot<List<dynamic>> snapshot) {
@@ -256,24 +267,26 @@ class _UserEventViewState extends State<UserEventView> {
                                   // Enable legend
                                   legend: Legend(isVisible: false),
                                   // Enable tooltip
-                                  tooltipBehavior: TooltipBehavior(enable: true),
+                                  tooltipBehavior:
+                                      TooltipBehavior(enable: true),
                                   series: <ChartSeries<_LikeData, String>>[
                                     LineSeries<_LikeData, String>(
                                         dataSource: data,
-                                        xValueMapper: (_LikeData sales, _) => sales.day,
+                                        xValueMapper: (_LikeData sales, _) =>
+                                            sales.day,
                                         yValueMapper: (_LikeData sales, _) =>
-                                        sales.likes,
+                                            sales.likes,
                                         name: 'Likes',
                                         // Enable data label
                                         dataLabelSettings:
-                                        DataLabelSettings(isVisible: true))
+                                            DataLabelSettings(isVisible: true))
                                   ]);
                             } else {
                               return Center(
                                   child: Text(
-                                    'No data',
-                                    textAlign: TextAlign.center,
-                                  ));
+                                'No data',
+                                textAlign: TextAlign.center,
+                              ));
                             }
                           })),
                 ],
@@ -281,9 +294,9 @@ class _UserEventViewState extends State<UserEventView> {
             } else {
               return Center(
                   child: Text(
-                    'Nothing to show',
-                    textAlign: TextAlign.center,
-                  ));
+                'Nothing to show',
+                textAlign: TextAlign.center,
+              ));
             }
           },
         )));
@@ -295,22 +308,24 @@ class _UserEventViewState extends State<UserEventView> {
     return await fetchEventViewData(eventId);
   }
 
-  void _navigateAndDisplaySelection(BuildContext context, Event event) async {
+  void _navigateAndDisplaySelection(BuildContext context, Event ev) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => UserEventUpdate(event)),
+      MaterialPageRoute(builder: (context) => UserEventUpdate(ev)),
     );
 
-    setState(() {});
+    setState(() {
+      event = getEventInfo();
+    });
   }
 
   void deleteEvent() {
     sendDeleteEventDataToServer(eventId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyPlacesEvents()),
+    );
   }
 }
-
-
-

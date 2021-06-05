@@ -343,6 +343,8 @@ class MapSampleState extends State<MapSample> {
       final pos = await getCoords(placeList);
       print(pos);
 
+      //BitmapDescriptor icn = await BitmapDescriptor.fromAssetImage(ImageConfiguration(), "assets/place_mark1.png");
+
       controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
           bearing: 0,
           target: LatLng(pos.first.latitude, pos.first.longitude),
@@ -361,6 +363,7 @@ class MapSampleState extends State<MapSample> {
               title: placeList.elementAt(markId).placeName,
               snippet: placeList.elementAt(markId).placeType,
             ),
+            //icon: icn,
           ));
 
           markId++;

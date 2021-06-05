@@ -177,6 +177,8 @@ class _PlaceEventListState extends State<PlaceEventList> {
                                                 textAlign: TextAlign.right),
                                             Text("${event.clicks} taps   ",
                                                 textAlign: TextAlign.right),
+                                            /*Text("${event.clicks} comments   ",
+                                                textAlign: TextAlign.right),*/
                                             /*Text("    Created by:   ",
                                                 textAlign: TextAlign.left)*/
                                           ],

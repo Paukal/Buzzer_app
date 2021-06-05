@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'menu.dart';
 import 'client.dart';
+import 'localDatabase.dart';
+import 'myPlacesEvents.dart';
 
 class AddPlace extends StatefulWidget {
   String city;
@@ -196,6 +198,14 @@ class AddPlaceState extends State<AddPlace> {
 
                       sendNewPlaceDataToServer(placeName, placeType, link,
                           street, city, public.toString(), userId, photoUrl);
+
+                      var localDB = DB();
+                      localDB.placesStored = false;
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyPlacesEvents()),
+                      );
                     }
                   },
                   child: Text('Submit'),

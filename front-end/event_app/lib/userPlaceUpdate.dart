@@ -82,6 +82,8 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController _controller = new ScrollController();
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -98,7 +100,10 @@ class UserPlaceUpdateState extends State<UserPlaceUpdate> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child:
-                Column(children: [
+                ListView(
+                    physics: const AlwaysScrollableScrollPhysics(), // new
+                    controller: _controller,
+                    children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(labelText: "Place name"),
                   initialValue: placeName,

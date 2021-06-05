@@ -49,6 +49,8 @@ class UserEventUpdateState extends State<UserEventUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController _controller = new ScrollController();
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -64,7 +66,10 @@ class UserEventUpdateState extends State<UserEventUpdate> {
                 color: Colors.orange[100],
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Column(children: [
+              child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(), // new
+                  controller: _controller,
+                  children: <Widget>[
                 TextFormField(
                   decoration: InputDecoration(labelText: "Event name"),
                   initialValue: eventName,

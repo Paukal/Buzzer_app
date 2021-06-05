@@ -115,7 +115,7 @@ Future<List<Event>> fetchEventListLiked() async {
     }
   }
 
-  return filteredList;
+  return list;
 }
 
 Future<List<Event>> fetchEventData({String testResponse = ""}) async {
@@ -591,6 +591,14 @@ void sendDeleteEventDataToServer(String eventId) async {
   print('Response body: ${response.body}');
 }
 
+void sendDeleteCommentDataToServer(String commentId) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/user/comment/delete?commentId=$commentId'); //instead of localhost
+  var response = await http.delete(url);
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+}
+
 Future<Place> fetchPlaceViewData(String placeId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/placeview?placeId=$placeId'); //instead of localhost
@@ -717,6 +725,27 @@ Future<String> getLikeStatus(String userId, String object, String objectId, {Str
 }
 
 Future<String> getLikeCount(String object, String objectId, {String testResponse = ""}) async {
+  var url = Uri.parse(
+      'http://10.0.2.2:8081/like/count?object=$object&objectId=$objectId'); //instead of localhost
+  var response = await http.get(url);
+
+  String responseBody = response.body;
+
+  if(testResponse != "") {
+    responseBody = testResponse;
+  }
+
+  if(responseBody!="[]"){
+    print('Response status: ${response.statusCode}');
+    print('Response body: $responseBody');
+
+    return responseBody;
+  }
+
+  return "";
+}
+
+Future<String> getCommentCount(String object, String objectId, {String testResponse = ""}) async {
   var url = Uri.parse(
       'http://10.0.2.2:8081/like/count?object=$object&objectId=$objectId'); //instead of localhost
   var response = await http.get(url);

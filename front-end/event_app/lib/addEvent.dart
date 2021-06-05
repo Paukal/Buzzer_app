@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'menu.dart';
 import 'client.dart';
+import 'localDatabase.dart';
+import 'myPlacesEvents.dart';
 
 class AddEvent extends StatefulWidget {
   String city;
@@ -162,6 +164,14 @@ class AddEventState extends State<AddEvent> {
                       photoUrl = "https://www.marketing91.com/wp-content/uploads/2020/02/Definition-of-place-marketing.jpg";
 
                       sendNewEventDataToServer(eventName, placeName, link, street, city, startDate, public.toString(), userId, photoUrl);
+
+                      var localDB = DB();
+                      localDB.eventsStored = false;
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyPlacesEvents()),
+                      );
                     }
                   },
                   child: Text('Submit'),

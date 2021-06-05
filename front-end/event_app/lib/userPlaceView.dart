@@ -7,6 +7,7 @@
 import 'package:event_app/userPlaceUpdate.dart';
 import 'package:flutter/material.dart';
 import 'client.dart';
+import 'myPlacesEvents.dart';
 import 'placesParse.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,72 +54,72 @@ class _UserPlaceViewState extends State<UserPlaceView> {
 
     beforeSevenDays = now
         .subtract(Duration(
-        days: 7,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 7,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeSixDays = now
         .subtract(Duration(
-        days: 6,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 6,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFiveDays = now
         .subtract(Duration(
-        days: 5,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 5,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeFourDays = now
         .subtract(Duration(
-        days: 4,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 4,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeThreeDays = now
         .subtract(Duration(
-        days: 3,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 3,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeTwoDays = now
         .subtract(Duration(
-        days: 2,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 2,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     beforeOneDays = now
         .subtract(Duration(
-        days: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        microseconds: 0))
+            days: 1,
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
+            milliseconds: 0,
+            microseconds: 0))
         .day
         .toString();
     today = now.day.toString();
@@ -132,9 +133,11 @@ class _UserPlaceViewState extends State<UserPlaceView> {
     ScrollController _controller = new ScrollController();
 
     return Scaffold(
-        appBar: AppBar(title: Text("My place"),),
-    body:  Material(
-        child: FutureBuilder<Place>(
+        appBar: AppBar(
+          title: Text("My place"),
+        ),
+        body: Material(
+            child: FutureBuilder<Place>(
           future: place,
           builder: (BuildContext context, AsyncSnapshot<Place> snapshot) {
             if (snapshot.hasData) {
@@ -172,31 +175,31 @@ class _UserPlaceViewState extends State<UserPlaceView> {
                 placeType = 'Sculptures';
               else if (placeType == "churches")
                 placeType = 'Churches';
-              else if (placeType == "mounds")
-                placeType = 'Mounds';
+              else if (placeType == "mounds") placeType = 'Mounds';
 
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(), // new
                 controller: _controller,
                 children: <Widget>[
                   Image.network(placeData.photoUrl),
-                  Row(children: [                  Align(
-                      alignment: Alignment(0.9, -0.75),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.grey[600],
-                            borderRadius: BorderRadius.circular(10)),
-                        width: 196.3,
-                        height: 40,
-                        child: IconButton(
-                          icon: const Icon(Icons.edit),
-                          color: Colors.white,
-                          tooltip: 'Edit place',
-                          onPressed: () {
-                            _navigateAndDisplaySelection(context, placeData);
-                          },
-                        ),
-                      )),
+                  Row(children: [
+                    Align(
+                        alignment: Alignment(0.9, -0.75),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey[600],
+                              borderRadius: BorderRadius.circular(10)),
+                          width: 196.3,
+                          height: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit),
+                            color: Colors.white,
+                            tooltip: 'Edit place',
+                            onPressed: () {
+                              _navigateAndDisplaySelection(context, placeData);
+                            },
+                          ),
+                        )),
                     Align(
                         alignment: Alignment(0.9, -0.75),
                         child: Container(
@@ -213,7 +216,8 @@ class _UserPlaceViewState extends State<UserPlaceView> {
                               deletePlace();
                             },
                           ),
-                        )),]),
+                        )),
+                  ]),
                   Container(
                     decoration: BoxDecoration(
                         color: Colors.orange[400],
@@ -290,25 +294,26 @@ class _UserPlaceViewState extends State<UserPlaceView> {
                                   // Enable legend
                                   legend: Legend(isVisible: false),
                                   // Enable tooltip
-                                  tooltipBehavior: TooltipBehavior(enable: true),
+                                  tooltipBehavior:
+                                      TooltipBehavior(enable: true),
                                   series: <ChartSeries<_LikeData, String>>[
                                     LineSeries<_LikeData, String>(
                                         dataSource: data,
                                         xValueMapper: (_LikeData sales, _) =>
-                                        sales.day,
+                                            sales.day,
                                         yValueMapper: (_LikeData sales, _) =>
-                                        sales.likes,
+                                            sales.likes,
                                         name: 'Likes',
                                         // Enable data label
                                         dataLabelSettings:
-                                        DataLabelSettings(isVisible: true))
+                                            DataLabelSettings(isVisible: true))
                                   ]);
                             } else {
                               return Center(
                                   child: Text(
-                                    'No data',
-                                    textAlign: TextAlign.center,
-                                  ));
+                                'No data',
+                                textAlign: TextAlign.center,
+                              ));
                             }
                           })),
                 ],
@@ -316,28 +321,33 @@ class _UserPlaceViewState extends State<UserPlaceView> {
             } else {
               return Center(
                   child: Text(
-                    'Nothing to show',
-                    textAlign: TextAlign.center,
-                  ));
+                'Nothing to show',
+                textAlign: TextAlign.center,
+              ));
             }
           },
         )));
   }
 
-  void _navigateAndDisplaySelection(BuildContext context, Place place) async {
+  void _navigateAndDisplaySelection(BuildContext context, Place pl) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => UserPlaceUpdate(place)),
+      MaterialPageRoute(builder: (context) => UserPlaceUpdate(pl)),
     );
 
-    setState(() {});
+    setState(() {
+      place = getPlaceInfo();
+    });
   }
 
   void deletePlace() {
     sendDeletePlaceDataToServer(placeId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MyPlacesEvents()),
+    );
   }
 
   Future<Place> getPlaceInfo() async {

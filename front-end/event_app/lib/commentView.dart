@@ -76,7 +76,9 @@ class _CommentViewState extends State<CommentView> {
   Widget build(BuildContext context) {
     CommentCollection comments;
 
-    return Material(
+    return /*Scaffold(
+        appBar: AppBar(title: Text("Comments"),),
+    body:*/Material(
         child: Stack(children: [
       FutureBuilder<CommentCollection>(
         future: commentList,
@@ -85,27 +87,46 @@ class _CommentViewState extends State<CommentView> {
           if (snapshot.hasData) {
             comments = snapshot.data!;
             if (comments.list.isNotEmpty) {
-              return ListView.builder(
+              return Container(
+                  height: 445,
+                  child: ListView.builder(
                   itemCount: comments.list.length,
                   itemBuilder: (BuildContext context, int index) {
                     final commentObject = comments.list[index];
 
-                    return Container(
+                    return Padding(
+                        padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                    child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.orange[200],
+                            color: Colors.orange[100],
                             borderRadius: BorderRadius.circular(15),),
                         height: 50,
                         child: Row(children: [
-                          Text(commentObject.comment),
+                          s1.userId == commentObject.userId ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            color: Colors.black,
+                            tooltip: 'Filters',
+                            onPressed: () {
+                                sendDeleteCommentDataToServer(commentObject.commentId.toString());
+
+                                setState(() {
+                                  commentList = getComments(object, objectId.toString());
+                                });
+                            },
+                          ) : Container(),
+                        Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                        child:
+                        Text(commentObject.comment)),
                           new Spacer(),
                           Column(
                             children: [
                               Text(commentObject.userName),
-                              Text(commentObject.date)
+                              Text(commentObject.date.replaceRange(commentObject.date.length-3, commentObject.date.length, ""))
                             ],
                           )
-                        ]));
-                  });
+                        ])));
+                  }));
             } else {
               return Center(
                   child: Text(
@@ -153,12 +174,15 @@ class _CommentViewState extends State<CommentView> {
             color: Colors.white,
             tooltip: 'Filters',
             onPressed: () {
-              sendComment(
-                  s1.userId, s1.firstName, object, objectId.toString(), comment);
+              if(comment != "") {
+                sendComment(
+                    s1.userId, s1.firstName, object, objectId.toString(),
+                    comment);
 
-              setState(() {
-                commentList = getComments(object, objectId.toString());
-              });
+                setState(() {
+                  commentList = getComments(object, objectId.toString());
+                });
+              }
             },
           ),
         ),

@@ -41,14 +41,21 @@ class _MenuState extends State<Menu> {
               color: Colors.orange[100],
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                  s1.loggedIn ? getAccountButtons() : Container(),
-                  getLogInOutButton(),
-                ]))),
+            child: Stack(children: [
+              Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                    s1.loggedIn ? getAccountButtons() : Container(),
+                    getLogInOutButton(),
+                  ])),
+          Positioned(
+              top: 700,
+              right: 0,
+              left: 305,
+              child: Text("Version 0.7.0"))
+              ])),
       ),
     );
   }
@@ -220,7 +227,8 @@ class _MenuState extends State<Menu> {
               height: 40,
               margin: const EdgeInsets.all(2.5),
               child: OutlinedButton(
-                child: Text('My likes', style: TextStyle(color: Colors.orange[900])),
+                child: Text('My likes',
+                    style: TextStyle(color: Colors.orange[900])),
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.resolveWith<Color>((states) {
@@ -240,8 +248,8 @@ class _MenuState extends State<Menu> {
               height: 40,
               margin: const EdgeInsets.all(2.5),
               child: OutlinedButton(
-                child:
-                    Text('My created', style: TextStyle(color: Colors.orange[900])),
+                child: Text('My created',
+                    style: TextStyle(color: Colors.orange[900])),
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.resolveWith<Color>((states) {
@@ -261,8 +269,8 @@ class _MenuState extends State<Menu> {
               height: 40,
               margin: const EdgeInsets.all(2.5),
               child: OutlinedButton(
-                child:
-                    Text('Create new', style: TextStyle(color: Colors.orange[900])),
+                child: Text('Create new',
+                    style: TextStyle(color: Colors.orange[900])),
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.resolveWith<Color>((states) {
@@ -281,8 +289,8 @@ class _MenuState extends State<Menu> {
               ? Container()
               : Container(
                   width: 200.0,
-              height: 40,
-              margin: const EdgeInsets.all(2.5),
+                  height: 40,
+                  margin: const EdgeInsets.all(2.5),
                   child: OutlinedButton(
                     child: Text('Verify account',
                         style: TextStyle(color: Colors.orange[900])),
@@ -304,8 +312,8 @@ class _MenuState extends State<Menu> {
           s1.admin
               ? Container(
                   width: 200.0,
-              height: 40,
-              margin: const EdgeInsets.all(2.5),
+                  height: 40,
+                  margin: const EdgeInsets.all(2.5),
                   child: OutlinedButton(
                     child: Text('Verify users',
                         style: TextStyle(color: Colors.orange[900])),
